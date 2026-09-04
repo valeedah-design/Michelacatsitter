@@ -10,10 +10,9 @@
     wireLogout();
     wireUploadButtons();
     wireRemoveButtons();
-    wireContactSettingsForm();
-    wireAvailabilitySettingsForm();
     wireServiceAdd();
     wireTestimonialAdd();
+    wireSaveAllButton();
   });
 
   function buildGalleryGrid() {
@@ -41,14 +40,14 @@
       if (res.status === 401) { window.location.href = '/admin/login'; return null; }
       return res.json();
     }).then(function (content) {
-      if (content) { applyContent(content); }
+      if (content) { applyInitialContent(content); }
     });
   }
 
-  // Re-renders every panel from a fresh content object — called after the
-  // initial load and after every save/add/remove, so the dashboard always
-  // reflects exactly what's in content.json.
-  function applyContent(content) {
+  // Full refresh from the server — used on first load and right after "Salva
+  // modifiche" confirms a save. NOT used after a single photo upload/remove,
+  // since that would wipe out any text edits the client hasn't saved yet.
+  function applyInitialContent(content) {
     renderPreviews(content);
     fillContactSettingsForm(content);
     fillAvailabilitySettingsForm(content);
@@ -75,6 +74,9 @@
     }
   }
 
+  // Photos save immediately on upload/remove (unlike everything else on this
+  // page) — only the photo previews are refreshed here, so an in-progress
+  // edit to services/testimonials/links elsewhere on the page is untouched.
   function wireUploadButtons() {
     document.querySelectorAll('.admin-btn[data-slot]').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -93,7 +95,7 @@
           .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
           .then(function (result) {
             if (!result.ok) { throw new Error(result.data.error || 'Errore'); }
-            applyContent(result.data.content);
+            renderPreviews(result.data.content);
             input.value = '';
             setStatus('Immagine aggiornata.', false);
           })
@@ -114,7 +116,7 @@
           .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
           .then(function (result) {
             if (!result.ok) { throw new Error(result.data.error || 'Errore'); }
-            applyContent(result.data.content);
+            renderPreviews(result.data.content);
             setStatus('Immagine rimossa.', false);
           })
           .catch(function (err) { setStatus(err.message || 'Errore durante la rimozione.', true); });
@@ -132,7 +134,7 @@
     });
   }
 
-  // ---------- contact links (WhatsApp / Rover) ----------
+  // ---------- contact links (WhatsApp / Rover) — just fields, no per-section save ----------
   function fillContactSettingsForm(content) {
     var num = document.getElementById('settings-whatsapp-number');
     var msg = document.getElementById('settings-whatsapp-message');
@@ -142,19 +144,7 @@
     if (rover) rover.value = content.roverUrl || '';
   }
 
-  function wireContactSettingsForm() {
-    var btn = document.getElementById('save-contact-settings');
-    if (!btn) return;
-    btn.addEventListener('click', function () {
-      postSettings({
-        whatsappNumber: fieldValue('settings-whatsapp-number'),
-        whatsappMessage: fieldValue('settings-whatsapp-message'),
-        roverUrl: fieldValue('settings-rover-url'),
-      }, 'Link di contatto aggiornati.');
-    });
-  }
-
-  // ---------- availability confirmation ----------
+  // ---------- availability confirmation — just fields, no per-section save ----------
   function fillAvailabilitySettingsForm(content) {
     var method = document.getElementById('settings-availability-method');
     var msgIt = document.getElementById('settings-availability-message-it');
@@ -165,48 +155,22 @@
     if (msgEn) msgEn.value = am.en || '';
   }
 
-  function wireAvailabilitySettingsForm() {
-    var btn = document.getElementById('save-availability-settings');
-    if (!btn) return;
-    btn.addEventListener('click', function () {
-      postSettings({
-        availabilityMethod: fieldValue('settings-availability-method') || 'message',
-        availabilityMessage: {
-          it: fieldValue('settings-availability-message-it'),
-          en: fieldValue('settings-availability-message-en'),
-        },
-      }, 'Impostazioni disponibilità aggiornate.');
-    });
-  }
-
-  function postSettings(body, successMessage) {
-    setStatus('Salvataggio…', false);
-    fetch('/admin/api/settings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    }).then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
-      .then(function (result) {
-        if (!result.ok) { throw new Error(result.data.error || 'Errore'); }
-        applyContent(result.data.content);
-        setStatus(successMessage, false);
-      })
-      .catch(function (err) { setStatus(err.message || 'Errore durante il salvataggio.', true); });
-  }
-
-  // ---------- services (Cosa faccio) ----------
+  // ---------- services (Cosa faccio) — rows are edited/added/removed locally;
+  // nothing hits the server until "Salva modifiche" is clicked ----------
   function renderServicesAdmin(services) {
     var list = document.getElementById('services-admin-list');
     if (!list) return;
     list.innerHTML = '';
-    services.forEach(function (s, i) {
-      list.appendChild(buildServiceRow(s, i));
+    services.forEach(function (s) {
+      list.appendChild(buildServiceRow(s));
     });
   }
 
-  function buildServiceRow(s, index) {
+  function buildServiceRow(s) {
+    s = s || {};
     var row = document.createElement('div');
     row.className = 'admin-list-item';
+    row.dataset.icon = ['home', 'clock', 'moon', 'paw'].indexOf(s.icon) !== -1 ? s.icon : 'paw';
     row.innerHTML = ''
       + '<div class="admin-field-row">'
       + '  <div class="admin-field"><label>Titolo (italiano)</label><input type="text" class="f-title-it" value="' + escHtml(s.titleIt) + '"></div>'
@@ -220,49 +184,40 @@
       + '</div>'
       + '<div class="admin-list-actions">'
       + '  <button type="button" class="admin-btn-remove" data-action="remove">Rimuovi</button>'
-      + '  <button type="button" class="admin-save-btn" data-action="save">Salva</button>'
       + '</div>';
 
-    row.querySelector('[data-action="save"]').addEventListener('click', function () {
-      putListItem('services', index, {
-        icon: s.icon || 'paw',
-        titleIt: row.querySelector('.f-title-it').value,
-        titleEn: row.querySelector('.f-title-en').value,
-        descIt: row.querySelector('.f-desc-it').value,
-        descEn: row.querySelector('.f-desc-en').value,
-        priceIt: row.querySelector('.f-price-it').value,
-        priceEn: row.querySelector('.f-price-en').value,
-      }, 'Servizio aggiornato.');
-    });
     row.querySelector('[data-action="remove"]').addEventListener('click', function () {
-      if (!window.confirm('Rimuovere questo servizio?')) return;
-      deleteListItem('services', index, 'Servizio rimosso.');
+      if (!window.confirm('Rimuovere questo servizio? Diventa definitivo quando premi "Salva modifiche".')) return;
+      row.remove();
     });
     return row;
   }
 
   function wireServiceAdd() {
     var btn = document.getElementById('add-service-btn');
-    if (!btn) return;
+    var list = document.getElementById('services-admin-list');
+    if (!btn || !list) return;
     btn.addEventListener('click', function () {
-      postListItem('services', {
-        icon: 'paw', titleIt: 'Nuovo servizio', titleEn: 'New service',
-        descIt: '', descEn: '', priceIt: '', priceEn: '',
-      }, 'Servizio aggiunto — modificalo qui sotto.');
+      var row = buildServiceRow({ icon: 'paw', titleIt: 'Nuovo servizio', titleEn: 'New service', descIt: '', descEn: '', priceIt: '', priceEn: '' });
+      list.appendChild(row);
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      var firstInput = row.querySelector('.f-title-it');
+      if (firstInput) firstInput.focus();
     });
   }
 
-  // ---------- testimonials (Recensioni) ----------
+  // ---------- testimonials (Recensioni) — same local-only pattern ----------
   function renderTestimonialsAdmin(testimonials) {
     var list = document.getElementById('testimonials-admin-list');
     if (!list) return;
     list.innerHTML = '';
-    testimonials.forEach(function (t, i) {
-      list.appendChild(buildTestimonialRow(t, i));
+    testimonials.forEach(function (t) {
+      list.appendChild(buildTestimonialRow(t));
     });
   }
 
-  function buildTestimonialRow(t, index) {
+  function buildTestimonialRow(t) {
+    t = t || {};
     var row = document.createElement('div');
     row.className = 'admin-list-item';
     row.innerHTML = ''
@@ -271,72 +226,83 @@
       + '<div class="admin-field"><label>Nome cliente</label><input type="text" class="f-name" value="' + escHtml(t.name) + '"></div>'
       + '<div class="admin-list-actions">'
       + '  <button type="button" class="admin-btn-remove" data-action="remove">Rimuovi</button>'
-      + '  <button type="button" class="admin-save-btn" data-action="save">Salva</button>'
       + '</div>';
 
-    row.querySelector('[data-action="save"]').addEventListener('click', function () {
-      putListItem('testimonials', index, {
-        quoteIt: row.querySelector('.f-quote-it').value,
-        quoteEn: row.querySelector('.f-quote-en').value,
-        name: row.querySelector('.f-name').value,
-      }, 'Recensione aggiornata.');
-    });
     row.querySelector('[data-action="remove"]').addEventListener('click', function () {
-      if (!window.confirm('Rimuovere questa recensione?')) return;
-      deleteListItem('testimonials', index, 'Recensione rimossa.');
+      if (!window.confirm('Rimuovere questa recensione? Diventa definitivo quando premi "Salva modifiche".')) return;
+      row.remove();
     });
     return row;
   }
 
   function wireTestimonialAdd() {
     var btn = document.getElementById('add-testimonial-btn');
-    if (!btn) return;
+    var list = document.getElementById('testimonials-admin-list');
+    if (!btn || !list) return;
     btn.addEventListener('click', function () {
-      postListItem('testimonials', { quoteIt: '', quoteEn: '', name: '' }, 'Recensione aggiunta — modificala qui sotto.');
+      var row = buildTestimonialRow({ quoteIt: '', quoteEn: '', name: '' });
+      list.appendChild(row);
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      var firstInput = row.querySelector('.f-quote-it');
+      if (firstInput) firstInput.focus();
     });
   }
 
-  // ---------- generic list CRUD helpers (services / testimonials) ----------
-  function postListItem(path, body, successMessage) {
-    setStatus('Salvataggio…', false);
-    fetch('/admin/api/' + path, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    }).then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
-      .then(function (result) {
-        if (!result.ok) { throw new Error(result.data.error || 'Errore'); }
-        applyContent(result.data.content);
-        setStatus(successMessage, false);
-      })
-      .catch(function (err) { setStatus(err.message || 'Errore.', true); });
+  // ---------- the one save button at the bottom of the page ----------
+  function wireSaveAllButton() {
+    var btn = document.getElementById('save-all-btn');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var body = {
+        whatsappNumber: fieldValue('settings-whatsapp-number'),
+        whatsappMessage: fieldValue('settings-whatsapp-message'),
+        roverUrl: fieldValue('settings-rover-url'),
+        availabilityMethod: fieldValue('settings-availability-method') || 'message',
+        availabilityMessage: {
+          it: fieldValue('settings-availability-message-it'),
+          en: fieldValue('settings-availability-message-en'),
+        },
+        services: collectRows('#services-admin-list', function (row) {
+          return {
+            icon: row.dataset.icon || 'paw',
+            titleIt: row.querySelector('.f-title-it').value,
+            titleEn: row.querySelector('.f-title-en').value,
+            descIt: row.querySelector('.f-desc-it').value,
+            descEn: row.querySelector('.f-desc-en').value,
+            priceIt: row.querySelector('.f-price-it').value,
+            priceEn: row.querySelector('.f-price-en').value,
+          };
+        }),
+        testimonials: collectRows('#testimonials-admin-list', function (row) {
+          return {
+            quoteIt: row.querySelector('.f-quote-it').value,
+            quoteEn: row.querySelector('.f-quote-en').value,
+            name: row.querySelector('.f-name').value,
+          };
+        }),
+      };
+
+      btn.disabled = true;
+      setStatus('Salvataggio in corso…', false);
+      fetch('/admin/api/save-all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      }).then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+        .then(function (result) {
+          if (!result.ok) { throw new Error(result.data.error || 'Errore'); }
+          applyInitialContent(result.data.content);
+          setStatus('Modifiche salvate ✓', false);
+        })
+        .catch(function (err) { setStatus(err.message || 'Errore durante il salvataggio.', true); })
+        .then(function () { btn.disabled = false; });
+    });
   }
 
-  function putListItem(path, index, body, successMessage) {
-    setStatus('Salvataggio…', false);
-    fetch('/admin/api/' + path + '/' + index, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
-    }).then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
-      .then(function (result) {
-        if (!result.ok) { throw new Error(result.data.error || 'Errore'); }
-        applyContent(result.data.content);
-        setStatus(successMessage, false);
-      })
-      .catch(function (err) { setStatus(err.message || 'Errore.', true); });
-  }
-
-  function deleteListItem(path, index, successMessage) {
-    setStatus('Rimozione…', false);
-    fetch('/admin/api/' + path + '/' + index, { method: 'DELETE' })
-      .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
-      .then(function (result) {
-        if (!result.ok) { throw new Error(result.data.error || 'Errore'); }
-        applyContent(result.data.content);
-        setStatus(successMessage, false);
-      })
-      .catch(function (err) { setStatus(err.message || 'Errore.', true); });
+  function collectRows(listSelector, readRow) {
+    var list = document.querySelector(listSelector);
+    if (!list) return [];
+    return Array.prototype.map.call(list.querySelectorAll('.admin-list-item'), readRow);
   }
 
   function fieldValue(id) {

@@ -75,9 +75,6 @@
         <label for="settings-rover-url">Link al tuo profilo Rover</label>
         <input type="text" id="settings-rover-url" placeholder="https://www.rover.com/it/il-tuo-profilo">
       </div>
-      <div class="admin-list-actions">
-        <button class="admin-save-btn" id="save-contact-settings">Salva</button>
-      </div>
     </section>
 
     <section class="admin-section">
@@ -112,10 +109,12 @@
         <label for="settings-availability-message-en">Messaggio (inglese)</label>
         <textarea id="settings-availability-message-en"></textarea>
       </div>
-      <div class="admin-list-actions">
-        <button class="admin-save-btn" id="save-availability-settings">Salva</button>
-      </div>
     </section>
+
+    <div class="admin-save-all-wrap">
+      <p class="admin-hint" style="text-align:center;">Le modifiche a link di contatto, servizi, recensioni e disponibilità si salvano tutte insieme da qui — le foto sopra si salvano invece subito, appena le carichi.</p>
+      <button type="button" class="admin-save-all-btn" id="save-all-btn">Salva modifiche</button>
+    </div>
 
     <p id="status-message" class="status-message"></p>
   </main>

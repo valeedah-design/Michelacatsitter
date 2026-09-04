@@ -16,10 +16,10 @@
   <!-- Full-width bar; the inner wrapper below matches .page's 1440px max-width so the
        logo/nav stay aligned with the rest of the page, while the gold background spans
        the whole browser width instead of stopping at the centered page's edges. -->
-  <header style="background:var(--cream);">
-    <div style="width:1440px; max-width:100%; margin:0 auto; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; padding:26px 72px;">
-      <img id="logo-header" src="/uploads/logo.png" alt="Michela Cat Sitter" style="height:64px; width:auto; display:block;">
-      <div style="display:flex; align-items:center; gap:44px;">
+  <header style="background:var(--cream); position:relative;">
+    <div class="section-pad" style="width:1440px; max-width:100%; margin:0 auto; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; padding:26px 72px;">
+      <img id="logo-header" src="/uploads/logo.png" alt="Michela Cat Sitter" style="height:64px; width:auto; display:block; flex-shrink:0;">
+      <div class="header-actions" style="display:flex; align-items:center; gap:44px;">
         <nav class="main-nav" style="display:flex; align-items:center; gap:36px; font-weight:700; font-size:16px;">
           <a href="#home" style="color:var(--ink);"><span data-i18n-lang="it">Home</span><span data-i18n-lang="en" hidden>Home</span></a>
           <a href="#servizi" style="color:var(--ink);"><span data-i18n-lang="it">Servizi</span><span data-i18n-lang="en" hidden>Services</span></a>
@@ -39,7 +39,32 @@
           <span data-i18n-lang="it">Scrivimi</span><span data-i18n-lang="en" hidden>Message me</span>
         </a>
       </div>
+      <!-- Shown only on tablet/phone (see styles.css) — .header-actions above is hidden there instead. -->
+      <button type="button" id="mobile-menu-btn" class="mobile-menu-btn" aria-label="Apri il menu" aria-expanded="false" aria-controls="mobile-nav">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
     </div>
+    <!-- Mobile/tablet nav drawer — duplicates the links, language toggle and WhatsApp
+         button above; both copies share the same classes/attributes script.js looks
+         for, so language switching and WhatsApp linking stay in sync automatically. -->
+    <nav id="mobile-nav" class="mobile-nav">
+      <a href="#home"><span data-i18n-lang="it">Home</span><span data-i18n-lang="en" hidden>Home</span></a>
+      <a href="#servizi"><span data-i18n-lang="it">Servizi</span><span data-i18n-lang="en" hidden>Services</span></a>
+      <a href="#chi-sono"><span data-i18n-lang="it">Chi sono</span><span data-i18n-lang="en" hidden>About</span></a>
+      <a href="#galleria"><span data-i18n-lang="it">Galleria</span><span data-i18n-lang="en" hidden>Gallery</span></a>
+      <a href="#recensioni"><span data-i18n-lang="it">Recensioni</span><span data-i18n-lang="en" hidden>Reviews</span></a>
+      <a href="#faq">FAQ</a>
+      <a href="#contatti"><span data-i18n-lang="it">Contatti</span><span data-i18n-lang="en" hidden>Contact</span></a>
+      <div class="lang-toggle">
+        <button type="button" data-set-lang="it" class="is-active">IT</button>
+        <span class="sep">|</span>
+        <button type="button" data-set-lang="en">EN</button>
+      </div>
+      <a href="#" class="btn btn-primary js-whatsapp-link">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.24 0-2.43-.27-3.5-.76L3 21l1.9-5.7A8.47 8.47 0 0 1 3.5 11.5 8.5 8.5 0 0 1 12 3a8.5 8.5 0 0 1 9 8.5Z"/></svg>
+        <span data-i18n-lang="it">Scrivimi</span><span data-i18n-lang="en" hidden>Message me</span>
+      </a>
+    </nav>
   </header>
 
   <!-- ===== HERO ===== -->
@@ -63,7 +88,7 @@
       <ellipse cx="6.2" cy="10.5" rx="1.7" ry="2.3"/><ellipse cx="10.2" cy="7.3" rx="1.7" ry="2.4"/><ellipse cx="14.8" cy="7.3" rx="1.7" ry="2.4"/><ellipse cx="18.3" cy="10.5" rx="1.7" ry="2.3"/>
     </svg>
 
-    <div style="width:1440px; max-width:100%; margin:0 auto; box-sizing:border-box; padding:56px 72px 96px 72px; position:relative; z-index:1;">
+    <div class="section-pad" style="width:1440px; max-width:100%; margin:0 auto; box-sizing:border-box; padding:56px 72px 96px 72px; position:relative; z-index:1;">
     <div class="hero-inner" style="display:flex; align-items:center; gap:64px;">
       <div class="hero-copy" style="flex:1 1 0; display:flex; flex-direction:column; align-items:flex-start; gap:24px;">
         <div class="pill">
@@ -133,7 +158,7 @@
 <div class="page">
 
   <!-- ===== SERVICES ===== -->
-  <section id="servizi" style="padding:64px 72px 96px 72px; background:var(--white);">
+  <section id="servizi" class="section-pad" style="padding:64px 72px 96px 72px; background:var(--white);">
     <div style="display:flex; flex-direction:column; gap:12px; max-width:640px; margin-bottom:52px;">
       <span class="section-label"><span data-i18n-lang="it">Cosa faccio</span><span data-i18n-lang="en" hidden>What I do</span></span>
       <h2 style="font-size:38px; color:var(--ink);"><span data-i18n-lang="it">Un servizio su misura per ogni gatto</span><span data-i18n-lang="en" hidden>A service tailored to every cat</span></h2>
@@ -148,7 +173,7 @@
   </section>
 
   <!-- ===== ABOUT ===== -->
-  <section id="chi-sono" style="padding:96px 72px; background:var(--paper);">
+  <section id="chi-sono" class="section-pad" style="padding:96px 72px; background:var(--paper);">
     <div class="about-inner" style="display:flex; align-items:center; gap:72px;">
       <div style="flex:0 0 420px; position:relative; max-width:100%;">
         <div id="photo-about" class="photo-slot" style="width:420px; max-width:100%; height:420px; border-radius:32px; background:var(--brand-pale); position:relative;">
@@ -189,7 +214,7 @@
   </section>
 
   <!-- ===== TESTIMONIALS ===== -->
-  <section id="recensioni" style="padding:96px 72px; background:var(--white);">
+  <section id="recensioni" class="section-pad" style="padding:96px 72px; background:var(--white);">
     <div style="display:flex; flex-direction:column; gap:12px; max-width:640px; margin-bottom:52px;">
       <span class="section-label"><span data-i18n-lang="it">Cosa dicono di me</span><span data-i18n-lang="en" hidden>What clients say</span></span>
       <h2 style="font-size:36px; color:var(--ink);"><span data-i18n-lang="it">Recensioni</span><span data-i18n-lang="en" hidden>Reviews</span></h2>
@@ -200,7 +225,7 @@
   </section>
 
   <!-- ===== MINI GALLERY ===== -->
-  <section id="galleria" style="padding:64px 72px 96px 72px; background:var(--paper);">
+  <section id="galleria" class="section-pad" style="padding:64px 72px 96px 72px; background:var(--paper);">
     <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:36px;">
       <div style="display:flex; flex-direction:column; gap:12px;">
         <span class="section-label"><span data-i18n-lang="it">Momenti felini</span><span data-i18n-lang="en" hidden>Feline moments</span></span>
@@ -240,7 +265,7 @@
   </section>
 
   <!-- ===== AVAILABILITY ===== -->
-  <section id="disponibilita" style="padding:96px 72px; background:var(--white);">
+  <section id="disponibilita" class="section-pad" style="padding:96px 72px; background:var(--white);">
     <div class="availability-inner" style="display:flex; align-items:center; gap:72px;">
       <div style="flex:1 1 0; display:flex; flex-direction:column; gap:20px; min-width:0;">
         <span class="section-label"><span data-i18n-lang="it">Disponibilità</span><span data-i18n-lang="en" hidden>Availability</span></span>
@@ -327,7 +352,7 @@
   </section>
 
   <!-- ===== FAQ ===== -->
-  <section id="faq" style="padding:96px 72px; background:var(--paper);">
+  <section id="faq" class="section-pad" style="padding:96px 72px; background:var(--paper);">
     <div style="display:flex; flex-direction:column; gap:12px; max-width:640px; margin-bottom:48px;">
       <span class="section-label">FAQ</span>
       <h2 style="font-size:36px; color:var(--ink);"><span data-i18n-lang="it">Tutto quello che vuoi sapere</span><span data-i18n-lang="en" hidden>Everything you want to know</span></h2>
@@ -415,7 +440,7 @@
   </section>
 
   <!-- ===== CONTACT ===== -->
-  <section id="contatti" style="padding:96px 72px; background:var(--ink); position:relative; overflow:hidden;">
+  <section id="contatti" class="section-pad" style="padding:96px 72px; background:var(--ink); position:relative; overflow:hidden;">
     <svg width="600" height="600" viewBox="0 0 600 600" style="position:absolute; bottom:-200px; left:-150px; opacity:0.5;">
       <circle cx="300" cy="300" r="300" fill="var(--brand)" opacity="0.35"/>
     </svg>
@@ -483,8 +508,14 @@
     </div>
   </section>
 
+</div>
+
   <!-- ===== FOOTER ===== -->
-  <footer style="padding:64px 72px 40px 72px; background:var(--ink);">
+  <!-- Full-width, like the header and hero: the dark background spans edge-to-edge
+       on wide screens. The inner wrapper matches .page's 1440px max-width so the
+       actual content stays aligned with the rest of the page. -->
+  <footer style="background:var(--ink);">
+   <div class="section-pad" style="width:1440px; max-width:100%; margin:0 auto; box-sizing:border-box; padding:64px 72px 40px 72px;">
     <div class="footer-grid" style="display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:40px; border-bottom:1px solid rgba(255,253,248,0.15);">
       <div style="display:flex; flex-direction:column; gap:14px;">
         <div style="display:flex; align-items:center; gap:10px;">
@@ -525,6 +556,7 @@
       <span style="color:var(--white); opacity:0.45; font-size:13px;">© <span id="footer-year">2026</span> Michela Cat Sitter · <span data-i18n-lang="it">Tutti i diritti riservati</span><span data-i18n-lang="en" hidden>All rights reserved</span></span>
       <span style="color:var(--white); opacity:0.45; font-size:13px;">IT · EN</span>
     </div>
+   </div>
   </footer>
 
   <a href="#" class="wa-float js-whatsapp-link">
@@ -534,7 +566,6 @@
     </span>
   </a>
 
-</div>
 <script src="/script.js"></script>
 </body>
 </html>

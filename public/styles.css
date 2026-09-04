@@ -79,6 +79,14 @@ img{max-width:100%; display:block;}
 html[data-lang="it"] [data-i18n-lang="en"]{display:none;}
 html[data-lang="en"] [data-i18n-lang="it"]{display:none;}
 
+/* ===== mobile/tablet nav drawer ===== */
+.mobile-menu-btn{display:none; align-items:center; justify-content:center; width:44px; height:44px; border-radius:12px; background:transparent; border:1.5px solid var(--ink); cursor:pointer; flex-shrink:0; padding:0;}
+.mobile-nav{display:none; flex-direction:column; gap:2px; background:var(--cream); padding:4px 24px 24px; }
+.mobile-nav.is-open{display:flex;}
+.mobile-nav a{display:block; padding:14px 2px; font-weight:700; font-size:16px; color:var(--ink); border-bottom:1px solid rgba(58,18,92,0.1);}
+.mobile-nav .lang-toggle{padding:16px 2px 4px;}
+.mobile-nav .btn{margin-top:12px; justify-content:center; width:100%;}
+
 /* ===== floating whatsapp ===== */
 .wa-float{position:fixed; right:36px; bottom:36px; z-index:50; display:flex; align-items:center; gap:12px; text-decoration:none;}
 .wa-float .wa-label{background:var(--ink); color:var(--white); font-weight:700; font-size:13px; padding:10px 16px; border-radius:100px; white-space:nowrap; box-shadow:0 8px 20px rgba(0,0,0,0.18);}
@@ -88,28 +96,50 @@ html[data-lang="en"] [data-i18n-lang="it"]{display:none;}
 .section{padding:96px 72px;}
 
 /* ===== responsive ===== */
+/* Header collapses to the hamburger menu earlier (1080px) than the rest of the
+   layout (960px) — at exactly 960-1080px (iPad landscape) the seven nav links
+   plus language toggle plus the WhatsApp button don't fit next to the logo. */
+@media (max-width: 1080px){
+  .header-actions{display:none !important;}
+  .mobile-menu-btn{display:flex !important;}
+}
 @media (max-width: 960px){
   .page{width:100%;}
   .section{padding:56px 32px;}
+  /* Every section/header/footer sets its own left/right padding inline (72px on
+     desktop) — .section-pad (added on each of those containers) is what lets a
+     single rule shrink all of them together on tablet/phone; !important is
+     required to beat the inline styles. */
+  .section-pad{padding-left:32px !important; padding-right:32px !important;}
   .hero-inner{flex-direction:column; gap:40px;}
+  .hero-copy{width:100%;}
   .hero-copy h1{font-size:38px !important;}
-  .hero-visual{flex:0 0 auto !important;}
+  .hero-visual{flex:0 0 auto !important; margin-top:8px;}
   .services-grid{grid-template-columns:repeat(2, minmax(0,1fr)) !important;}
   .about-inner{flex-direction:column; gap:32px;}
   .about-inner > *{flex:none !important; width:100%;}
   .testimonials-grid{grid-template-columns:1fr !important;}
   .gallery-grid{grid-template-columns:repeat(2, minmax(0,1fr)) !important;}
   .availability-inner{flex-direction:column; gap:32px;}
+  .availability-inner > *{flex:none !important; width:100%;}
   .contact-grid{grid-template-columns:1fr !important;}
-  .footer-grid{grid-template-columns:1fr 1fr !important;}
-  header .main-nav{display:none;}
+  .footer-grid{grid-template-columns:1fr 1fr !important; gap:28px !important;}
   .wa-float{right:18px; bottom:18px;}
   .wa-float .wa-label{display:none;}
   .wa-float .wa-bubble{width:56px; height:56px;}
 }
 @media (max-width: 600px){
+  .section-pad{padding-left:20px !important; padding-right:20px !important;}
   .services-grid,
   .gallery-grid{grid-template-columns:1fr !important;}
   .footer-grid{grid-template-columns:1fr !important;}
   .hero-copy h1{font-size:32px !important;}
+  .hero-copy p{font-size:16px !important;}
+  .pill{font-size:12px !important; padding:8px 14px !important;}
+  .hero-visual [style*="width:420px"]{width:280px !important; height:280px !important;}
+  .btn{font-size:14px !important; padding:13px 20px !important;}
+  .card{padding:24px !important;}
+  #cal-grid{gap:4px !important;}
+  .cal-day span, .cal-cell span{font-size:11px !important;}
+  .availability-inner [style*="flex:0 0 460px"]{width:100% !important;}
 }

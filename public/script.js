@@ -27,12 +27,31 @@
   document.addEventListener('DOMContentLoaded', function () {
     setupLanguageToggle();
     setupWhatsappRoverLinks({});
+    setupMobileNav();
     setupCalendar();
     setupFaqAccordion();
     setupContactForm();
     setupFooterYear();
     loadContent();
   });
+
+  // ---------- mobile/tablet nav drawer ----------
+  function setupMobileNav() {
+    var btn = document.getElementById('mobile-menu-btn');
+    var nav = document.getElementById('mobile-nav');
+    if (!btn || !nav) return;
+    btn.addEventListener('click', function () {
+      var isOpen = nav.classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+    // Tapping a link closes the drawer so the page can scroll to the section.
+    nav.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        nav.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+    });
+  }
 
   // ---------- language toggle ----------
   function setupLanguageToggle() {
