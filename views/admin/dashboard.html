@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Immagini — Michela Cat Sitter Admin</title>
+<link rel="stylesheet" href="/admin/assets/admin.css">
+</head>
+<body>
+  <header class="admin-header">
+    <span class="admin-title">Michela Cat Sitter — Pannello immagini</span>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <a href="/" target="_blank" class="admin-link">Vedi il sito ↗</a>
+      <button id="logout-btn" class="admin-btn-secondary">Esci</button>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <section class="admin-section">
+      <h2>Logo</h2>
+      <p class="admin-hint">Usato nell'intestazione, nella sezione principale e nel footer.</p>
+      <div class="slot-row">
+        <div class="slot-preview" id="preview-logo"></div>
+        <div class="slot-controls">
+          <input type="file" id="file-logo" accept="image/png,image/jpeg,image/webp,image/gif">
+          <button class="admin-btn" data-slot="logo" data-input="file-logo">Carica / sostituisci</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-section">
+      <h2>Chi sono — foto di Michela</h2>
+      <p class="admin-hint">La foto nella sezione "Chi sono" della homepage.</p>
+      <div class="slot-row">
+        <div class="slot-preview" id="preview-about"></div>
+        <div class="slot-controls">
+          <input type="file" id="file-about" accept="image/png,image/jpeg,image/webp,image/gif">
+          <button class="admin-btn" data-slot="about" data-input="file-about">Carica / sostituisci</button>
+          <button class="admin-btn-remove" data-slot="about">Rimuovi</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-section">
+      <h2>Galleria — "Momenti felini"</h2>
+      <p class="admin-hint">Le 4 foto della galleria in homepage.</p>
+      <div class="gallery-grid" id="gallery-grid"></div>
+    </section>
+
+    <p id="status-message" class="status-message"></p>
+  </main>
+
+  <script src="/admin/assets/admin.js"></script>
+</body>
+</html>

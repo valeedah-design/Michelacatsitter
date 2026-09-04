@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Accedi — Michela Cat Sitter Admin</title>
+<link rel="stylesheet" href="/admin/assets/admin.css">
+</head>
+<body class="admin-login-body">
+  <form id="login-form" class="login-card">
+    <h1>Michela Cat Sitter</h1>
+    <p class="subtitle">Pannello immagini</p>
+    <label>
+      Username
+      <input type="text" name="username" autocomplete="username" required>
+    </label>
+    <label>
+      Password
+      <input type="password" name="password" autocomplete="current-password" required>
+    </label>
+    <button type="submit">Accedi</button>
+    <p id="login-error" class="error-text"></p>
+  </form>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var form = e.target;
+      var errorEl = document.getElementById('login-error');
+      errorEl.textContent = '';
+      fetch('/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: form.username.value,
+          password: form.password.value
+        })
+      }).then(function (res) {
+        if (res.ok) { window.location.href = '/admin'; return; }
+        return res.json().then(function (data) {
+          errorEl.textContent = (data && data.error) || 'Accesso non riuscito.';
+        });
+      }).catch(function () {
+        errorEl.textContent = 'Errore di rete, riprova.';
+      });
+    });
+  </script>
+</body>
+</html>
