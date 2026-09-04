@@ -54,3 +54,25 @@ h1,h2{font-family:'Fredoka',system-ui,sans-serif; margin:0; font-weight:600;}
 
 .status-message{text-align:center; font-size:14px; font-weight:700; min-height:20px; color:var(--brand);}
 .status-message.is-error{color:var(--danger);}
+
+/* ---- text/settings forms (WhatsApp, Rover, availability) ---- */
+.admin-field{display:flex; flex-direction:column; gap:6px; margin-bottom:16px;}
+.admin-field label{font-size:13px; font-weight:700; opacity:0.75;}
+.admin-field input[type=text],
+.admin-field input[type=url],
+.admin-field textarea,
+.admin-field select{padding:10px 12px; border-radius:10px; border:1.5px solid var(--brand-pale); font-size:14px; font-family:inherit; width:100%;}
+.admin-field textarea{min-height:64px; resize:vertical;}
+.admin-field .admin-hint{margin:0;}
+.admin-field-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+@media (max-width:640px){ .admin-field-row{grid-template-columns:1fr;} }
+
+/* ---- editable lists (services, testimonials) ---- */
+.admin-list-item{border:1.5px solid var(--brand-pale); border-radius:14px; padding:18px; margin-bottom:16px;}
+.admin-list-item .admin-field{margin-bottom:12px;}
+.admin-list-item .admin-field:last-child{margin-bottom:0;}
+.admin-list-actions{display:flex; align-items:center; justify-content:flex-end; gap:10px; margin-top:6px;}
+.admin-add-btn{background:transparent; color:var(--brand); border:1.5px dashed var(--brand); padding:10px 18px; border-radius:100px; font-weight:700; font-size:13px; cursor:pointer; width:100%;}
+.admin-add-btn:hover{background:var(--brand-pale);}
+.admin-save-btn{background:var(--brand); color:var(--white); border:none; padding:10px 18px; border-radius:100px; font-weight:700; font-size:13px; cursor:pointer;}
+.admin-save-btn:hover{background:var(--ink);}

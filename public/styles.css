@@ -48,6 +48,13 @@ img{max-width:100%; display:block;}
 .faq-item.is-open .faq-chevron{transform:rotate(180deg);}
 .faq-question{display:flex; align-items:center; justify-content:space-between; cursor:pointer; gap:16px; background:none; border:none; width:100%; text-align:left; padding:0; color:inherit;}
 
+/* ===== live-location pulse (hero pill dot) ===== */
+@keyframes live-pulse{
+  0%, 100%{opacity:1; transform:scale(1);}
+  50%{opacity:0.35; transform:scale(0.82);}
+}
+.live-pulse{animation:live-pulse 1.6s ease-in-out infinite; transform-origin:center;}
+
 /* ===== dynamic photo slots (logo / about / gallery) ===== */
 .photo-slot{position:relative; overflow:hidden;}
 .photo-slot img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:none;}

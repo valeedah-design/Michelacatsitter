@@ -8,7 +8,7 @@
 </head>
 <body>
   <header class="admin-header">
-    <span class="admin-title">Michela Cat Sitter — Pannello immagini</span>
+    <span class="admin-title">Michela Cat Sitter — Pannello di gestione</span>
     <div style="display:flex; align-items:center; gap:12px;">
       <a href="/" target="_blank" class="admin-link">Vedi il sito ↗</a>
       <button id="logout-btn" class="admin-btn-secondary">Esci</button>
@@ -58,6 +58,63 @@
       <h2>Galleria — "Momenti felini"</h2>
       <p class="admin-hint">Le 4 foto della galleria in homepage.</p>
       <div class="gallery-grid" id="gallery-grid"></div>
+    </section>
+
+    <section class="admin-section">
+      <h2>Link di contatto</h2>
+      <p class="admin-hint">Il numero WhatsApp e il link Rover usati da tutti i pulsanti "Scrivimi" e "Prenota su Rover" del sito — cambiali quando vuoi, senza bisogno di aiuto tecnico.</p>
+      <div class="admin-field">
+        <label for="settings-whatsapp-number">Numero WhatsApp (formato internazionale, solo cifre — es. 39 + numero, senza + o spazi)</label>
+        <input type="text" id="settings-whatsapp-number" placeholder="393331234567">
+      </div>
+      <div class="admin-field">
+        <label for="settings-whatsapp-message">Messaggio precompilato su WhatsApp</label>
+        <textarea id="settings-whatsapp-message"></textarea>
+      </div>
+      <div class="admin-field">
+        <label for="settings-rover-url">Link al tuo profilo Rover</label>
+        <input type="text" id="settings-rover-url" placeholder="https://www.rover.com/it/il-tuo-profilo">
+      </div>
+      <div class="admin-list-actions">
+        <button class="admin-save-btn" id="save-contact-settings">Salva</button>
+      </div>
+    </section>
+
+    <section class="admin-section">
+      <h2>Cosa faccio — servizi</h2>
+      <p class="admin-hint">I servizi mostrati nella sezione "Cosa faccio" della homepage. Modifica quelli esistenti o aggiungine di nuovi: compaiono subito sul sito.</p>
+      <div id="services-admin-list"></div>
+      <button type="button" class="admin-add-btn" id="add-service-btn">+ Aggiungi servizio</button>
+    </section>
+
+    <section class="admin-section">
+      <h2>Recensioni</h2>
+      <p class="admin-hint">Le recensioni mostrate nella sezione "Recensioni" della homepage.</p>
+      <div id="testimonials-admin-list"></div>
+      <button type="button" class="admin-add-btn" id="add-testimonial-btn">+ Aggiungi recensione</button>
+    </section>
+
+    <section class="admin-section">
+      <h2>Disponibilità — messaggio di conferma</h2>
+      <p class="admin-hint">Cosa succede quando un cliente clicca su un giorno libero nel calendario e conferma la richiesta. Usa {giorno} nel testo per inserire il giorno scelto.</p>
+      <div class="admin-field">
+        <label for="settings-availability-method">Come ricevere la richiesta</label>
+        <select id="settings-availability-method">
+          <option value="message">Mostra un messaggio sulla pagina</option>
+          <option value="whatsapp">Apri WhatsApp con il messaggio già pronto</option>
+        </select>
+      </div>
+      <div class="admin-field">
+        <label for="settings-availability-message-it">Messaggio (italiano)</label>
+        <textarea id="settings-availability-message-it"></textarea>
+      </div>
+      <div class="admin-field">
+        <label for="settings-availability-message-en">Messaggio (inglese)</label>
+        <textarea id="settings-availability-message-en"></textarea>
+      </div>
+      <div class="admin-list-actions">
+        <button class="admin-save-btn" id="save-availability-settings">Salva</button>
+      </div>
     </section>
 
     <p id="status-message" class="status-message"></p>

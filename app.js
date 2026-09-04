@@ -150,4 +150,87 @@ app.post('/admin/api/remove', requireAuth, async (req, res) => {
   res.json({ ok: true, content });
 });
 
+// ---------- site settings (WhatsApp / Rover links, availability confirmation) ----------
+// Body: any subset of { whatsappNumber, whatsappMessage, roverUrl, availabilityMethod,
+// availabilityMessage: { it, en } }. Only recognized string/plain-object fields are copied
+// over so a client-editable form can never inject arbitrary keys into content.json.
+app.post('/admin/api/settings', requireAuth, async (req, res) => {
+  const body = req.body || {};
+  const content = await storage.readContent();
+
+  if (typeof body.whatsappNumber === 'string') content.whatsappNumber = body.whatsappNumber.trim();
+  if (typeof body.whatsappMessage === 'string') content.whatsappMessage = body.whatsappMessage.trim();
+  if (typeof body.roverUrl === 'string') content.roverUrl = body.roverUrl.trim();
+  if (body.availabilityMethod === 'whatsapp' || body.availabilityMethod === 'message') {
+    content.availabilityMethod = body.availabilityMethod;
+  }
+  if (body.availabilityMessage && typeof body.availabilityMessage === 'object') {
+    content.availabilityMessage = {
+      it: typeof body.availabilityMessage.it === 'string' ? body.availabilityMessage.it : content.availabilityMessage.it,
+      en: typeof body.availabilityMessage.en === 'string' ? body.availabilityMessage.en : content.availabilityMessage.en,
+    };
+  }
+
+  await storage.writeContent(content);
+  res.json({ ok: true, content });
+});
+
+// ---------- services & testimonials (client-editable lists) ----------
+function sanitizeService(raw) {
+  raw = raw || {};
+  return {
+    icon: ['home', 'clock', 'moon', 'paw'].includes(raw.icon) ? raw.icon : 'paw',
+    titleIt: String(raw.titleIt || '').slice(0, 120),
+    titleEn: String(raw.titleEn || '').slice(0, 120),
+    descIt: String(raw.descIt || '').slice(0, 400),
+    descEn: String(raw.descEn || '').slice(0, 400),
+    priceIt: String(raw.priceIt || '').slice(0, 80),
+    priceEn: String(raw.priceEn || '').slice(0, 80),
+  };
+}
+
+function sanitizeTestimonial(raw) {
+  raw = raw || {};
+  return {
+    quoteIt: String(raw.quoteIt || '').slice(0, 500),
+    quoteEn: String(raw.quoteEn || '').slice(0, 500),
+    name: String(raw.name || '').slice(0, 80),
+  };
+}
+
+function listCrudRoutes(path, key, sanitize) {
+  // Add: POST /admin/api/<path>  { ...fields }
+  app.post(`/admin/api/${path}`, requireAuth, async (req, res) => {
+    const content = await storage.readContent();
+    content[key].push(sanitize(req.body));
+    await storage.writeContent(content);
+    res.json({ ok: true, content });
+  });
+  // Update: PUT /admin/api/<path>/:index  { ...fields }
+  app.put(`/admin/api/${path}/:index`, requireAuth, async (req, res) => {
+    const idx = parseInt(req.params.index, 10);
+    const content = await storage.readContent();
+    if (Number.isNaN(idx) || idx < 0 || idx >= content[key].length) {
+      return res.status(400).json({ error: 'Invalid index' });
+    }
+    content[key][idx] = sanitize(req.body);
+    await storage.writeContent(content);
+    res.json({ ok: true, content });
+  });
+  // Remove: DELETE /admin/api/<path>/:index
+  app.delete(`/admin/api/${path}/:index`, requireAuth, async (req, res) => {
+    const idx = parseInt(req.params.index, 10);
+    const content = await storage.readContent();
+    if (Number.isNaN(idx) || idx < 0 || idx >= content[key].length) {
+      return res.status(400).json({ error: 'Invalid index' });
+    }
+    content[key].splice(idx, 1);
+    await storage.writeContent(content);
+    res.json({ ok: true, content });
+  });
+}
+
+listCrudRoutes('services', 'services', sanitizeService);
+listCrudRoutes('testimonials', 'testimonials', sanitizeTestimonial);
+
 module.exports = app;

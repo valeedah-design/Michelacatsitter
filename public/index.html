@@ -42,10 +42,11 @@
     </div>
   </header>
 
-<div class="page">
-
   <!-- ===== HERO ===== -->
-  <section id="home" style="position:relative; padding:56px 72px 96px 72px; overflow:hidden;">
+  <!-- Full-width, like the header: the decorative background spans edge-to-edge
+       on wide screens. The inner wrapper below matches .page's 1440px max-width
+       so the actual content stays aligned with the rest of the page. -->
+  <section id="home" style="position:relative; overflow:hidden; background:var(--paper);">
     <svg width="520" height="520" viewBox="0 0 520 520" style="position:absolute; top:-80px; right:-40px; z-index:0;">
       <circle cx="260" cy="260" r="260" fill="var(--cream-soft)"/>
     </svg>
@@ -62,11 +63,12 @@
       <ellipse cx="6.2" cy="10.5" rx="1.7" ry="2.3"/><ellipse cx="10.2" cy="7.3" rx="1.7" ry="2.4"/><ellipse cx="14.8" cy="7.3" rx="1.7" ry="2.4"/><ellipse cx="18.3" cy="10.5" rx="1.7" ry="2.3"/>
     </svg>
 
-    <div class="hero-inner" style="position:relative; z-index:1; display:flex; align-items:center; gap:64px;">
+    <div style="width:1440px; max-width:100%; margin:0 auto; box-sizing:border-box; padding:56px 72px 96px 72px; position:relative; z-index:1;">
+    <div class="hero-inner" style="display:flex; align-items:center; gap:64px;">
       <div class="hero-copy" style="flex:1 1 0; display:flex; flex-direction:column; align-items:flex-start; gap:24px;">
         <div class="pill">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="5"/></svg>
-          <span data-i18n-lang="it">Cat sitter a domicilio · [CITTÀ]</span><span data-i18n-lang="en" hidden>Cat sitter, on location · [CITY]</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="live-pulse"><circle cx="12" cy="12" r="5"/></svg>
+          <span data-i18n-lang="it">Cat sitter a domicilio · Napoli</span><span data-i18n-lang="en" hidden>Cat sitter, on location · Naples</span>
         </div>
         <h1 style="font-size:56px; line-height:1.08; color:var(--ink); max-width:620px;">
           <span data-i18n-lang="it">Il tuo gatto <span style="position:relative; display:inline-block;">sereno<svg width="150" height="16" viewBox="0 0 150 16" style="position:absolute; left:0; bottom:-8px; width:100%; height:auto;"><path d="M2 8 Q 20 -2, 38 8 T 74 8 T 110 8 T 146 8" fill="none" stroke="var(--brand-light)" stroke-width="6" stroke-linecap="round"/></svg></span>,<br>anche quando tu non ci sei</span>
@@ -92,12 +94,12 @@
         </div>
         <div style="display:flex; align-items:center; gap:32px; margin-top:12px; flex-wrap:wrap;">
           <div style="display:flex; flex-direction:column; gap:2px;">
-            <span style="font-family:'Fredoka',sans-serif; font-size:24px; font-weight:600; color:var(--ink);">[X]+ <span data-i18n-lang="it">anni</span><span data-i18n-lang="en" hidden>years</span></span>
+            <span style="font-family:'Fredoka',sans-serif; font-size:24px; font-weight:600; color:var(--ink);">4+ <span data-i18n-lang="it">anni</span><span data-i18n-lang="en" hidden>years</span></span>
             <span style="font-size:13px; opacity:0.6;"><span data-i18n-lang="it">di esperienza</span><span data-i18n-lang="en" hidden>of experience</span></span>
           </div>
           <div style="width:1px; height:34px; background:var(--ink); opacity:0.12;"></div>
           <div style="display:flex; flex-direction:column; gap:2px;">
-            <span style="font-family:'Fredoka',sans-serif; font-size:24px; font-weight:600; color:var(--ink);">[N]+</span>
+            <span style="font-family:'Fredoka',sans-serif; font-size:24px; font-weight:600; color:var(--ink);">100+</span>
             <span style="font-size:13px; opacity:0.6;"><span data-i18n-lang="it">gatti seguiti con cura</span><span data-i18n-lang="en" hidden>cats cared for</span></span>
           </div>
           <div style="width:1px; height:34px; background:var(--ink); opacity:0.12;"></div>
@@ -125,7 +127,10 @@
         </div>
       </div>
     </div>
+    </div>
   </section>
+
+<div class="page">
 
   <!-- ===== SERVICES ===== -->
   <section id="servizi" style="padding:64px 72px 96px 72px; background:var(--white);">
@@ -133,57 +138,9 @@
       <span class="section-label"><span data-i18n-lang="it">Cosa faccio</span><span data-i18n-lang="en" hidden>What I do</span></span>
       <h2 style="font-size:38px; color:var(--ink);"><span data-i18n-lang="it">Un servizio su misura per ogni gatto</span><span data-i18n-lang="en" hidden>A service tailored to every cat</span></h2>
     </div>
-    <div class="services-grid" style="display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:28px;">
-
-      <div class="card" style="display:flex; flex-direction:column; gap:18px; box-shadow:none; background:var(--paper); transform:rotate(-1.5deg);">
-        <div style="width:56px; height:56px; border-radius:16px; background:var(--brand-pale); display:flex; align-items:center; justify-content:center; transform:rotate(6deg);">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5A1.5 1.5 0 0 0 7 21h10a1.5 1.5 0 0 0 1.5-1.5V10"/></svg>
-        </div>
-        <h3 style="font-size:20px;"><span data-i18n-lang="it">Visita a domicilio</span><span data-i18n-lang="en" hidden>Drop-in visit</span></h3>
-        <p style="font-size:15px; line-height:1.6; opacity:0.75;">
-          <span data-i18n-lang="it">Vengo a casa tua per una visita breve, circa un'ora: cibo, acqua fresca, lettiera pulita e tante coccole secondo la sua routine.</span>
-          <span data-i18n-lang="en" hidden>I come to your home for a short visit, about an hour: food, fresh water, a clean litter box and plenty of cuddles, on your cat's own routine.</span>
-        </p>
-        <span style="font-weight:800; font-size:15px; color:var(--brand); margin-top:auto; padding-top:8px;"><span data-i18n-lang="it">da 30€ / visita (1 ora)</span><span data-i18n-lang="en" hidden>from €30 / visit (1 hour)</span></span>
-      </div>
-
-      <div class="card" style="display:flex; flex-direction:column; gap:18px; box-shadow:none; background:var(--paper); transform:rotate(1deg);">
-        <div style="width:56px; height:56px; border-radius:16px; background:var(--brand-pale); display:flex; align-items:center; justify-content:center; transform:rotate(-6deg);">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 3v2.2M12 18.8V21M4.2 12H2.5M21.5 12h-1.7M6 6l1.3 1.3M16.7 16.7 18 18M18 6l-1.3 1.3M7.3 16.7 6 18"/></svg>
-        </div>
-        <h3 style="font-size:20px;"><span data-i18n-lang="it">Diurno a domicilio</span><span data-i18n-lang="en" hidden>Full-day, at your home</span></h3>
-        <p style="font-size:15px; line-height:1.6; opacity:0.75;">
-          <span data-i18n-lang="it">Resto a casa tua per l'intera giornata: il tuo gatto ha compagnia continua, dalla mattina alla sera, senza mai sentirsi solo.</span>
-          <span data-i18n-lang="en" hidden>I stay at your home for the whole day: your cat has company from morning to evening, and is never left alone.</span>
-        </p>
-        <span style="font-weight:800; font-size:15px; color:var(--brand); margin-top:auto; padding-top:8px;"><span data-i18n-lang="it">da [PREZZO]€ / giornata</span><span data-i18n-lang="en" hidden>from [PRICE]€ / day</span></span>
-      </div>
-
-      <div class="card" style="display:flex; flex-direction:column; gap:18px; box-shadow:none; background:var(--paper); transform:rotate(-1deg);">
-        <div style="width:56px; height:56px; border-radius:16px; background:var(--brand-pale); display:flex; align-items:center; justify-content:center; transform:rotate(6deg);">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>
-        </div>
-        <h3 style="font-size:20px;"><span data-i18n-lang="it">Soggiorno a casa mia</span><span data-i18n-lang="en" hidden>Boarding, at my home</span></h3>
-        <p style="font-size:15px; line-height:1.6; opacity:0.75;">
-          <span data-i18n-lang="it">Il tuo gatto viene a stare a casa mia: massima attenzione, compagnia e coccole giorno e notte per tutta la tua assenza.</span>
-          <span data-i18n-lang="en" hidden>Your cat comes to stay at my home: full attention, company and cuddles day and night for the whole time you're away.</span>
-        </p>
-        <span style="font-weight:800; font-size:15px; color:var(--brand); margin-top:auto; padding-top:8px;"><span data-i18n-lang="it">da [PREZZO]€ / notte</span><span data-i18n-lang="en" hidden>from [PRICE]€ / night</span></span>
-      </div>
-
-      <div class="card" style="display:flex; flex-direction:column; gap:18px; box-shadow:none; background:var(--paper); transform:rotate(1.5deg);">
-        <div style="width:56px; height:56px; border-radius:16px; background:var(--brand-pale); display:flex; align-items:center; justify-content:center; transform:rotate(-6deg);">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="9" r="2.4"/><circle cx="16" cy="9" r="2.4"/><path d="M4.5 19c.4-2.8 2.3-4.3 3.5-4.3s3.1 1.5 3.5 4.3M12.5 19c.4-2.8 2.3-4.3 3.5-4.3s3.1 1.5 3.5 4.3"/></svg>
-        </div>
-        <h3 style="font-size:20px;"><span data-i18n-lang="it">Altri animali & extra</span><span data-i18n-lang="en" hidden>Other pets &amp; extras</span></h3>
-        <p style="font-size:15px; line-height:1.6; opacity:0.75;">
-          <span data-i18n-lang="it">Cani, conigli, tartarughe — e piccole commissioni come piante da annaffiare o posta da ritirare: chiedimi pure.</span>
-          <span data-i18n-lang="en" hidden>Dogs, rabbits, turtles — and small errands like watering plants or collecting mail: just ask.</span>
-        </p>
-        <span style="font-weight:800; font-size:15px; color:var(--brand); margin-top:auto; padding-top:8px;"><span data-i18n-lang="it">su richiesta</span><span data-i18n-lang="en" hidden>on request</span></span>
-      </div>
-
-    </div>
+    <!-- Populated by script.js from /api/content (admin > Cosa faccio) so the client can edit,
+         add or remove services without touching code. -->
+    <div class="services-grid" id="services-grid" style="display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:28px;"></div>
     <p style="font-size:14px; opacity:0.55; margin-top:28px;">
       <span data-i18n-lang="it">Prezzi indicativi — sconto per più visite settimanali o soggiorni prolungati, o per più gatti nella stessa casa.</span>
       <span data-i18n-lang="en" hidden>Indicative prices — discounts for multiple weekly visits, extended stays, or more than one cat in the same home.</span>
@@ -206,8 +163,8 @@
         <span class="section-label"><span data-i18n-lang="it">Chi sono</span><span data-i18n-lang="en" hidden>About me</span></span>
         <h2 style="font-size:36px; color:var(--ink);"><span data-i18n-lang="it">Ciao, sono Michela</span><span data-i18n-lang="en" hidden>Hi, I'm Michela</span></h2>
         <p style="font-size:17px; line-height:1.7; opacity:0.78; max-width:540px;">
-          <span data-i18n-lang="it">Da [X] anni mi prendo cura dei gatti del vicinato come se fossero i miei. Ogni gatto ha il suo carattere, le sue manie, i suoi nascondigli preferiti — il mio lavoro è imparare a conoscerli, uno per uno.</span>
-          <span data-i18n-lang="en" hidden>For [X] years I've been caring for the neighbourhood's cats as if they were my own. Every cat has its own character, quirks and favourite hiding spots — my job is learning each one, one at a time.</span>
+          <span data-i18n-lang="it">Da 4 anni mi prendo cura dei gatti del vicinato come se fossero i miei. Ogni gatto ha il suo carattere, le sue manie, i suoi nascondigli preferiti — il mio lavoro è imparare a conoscerli, uno per uno.</span>
+          <span data-i18n-lang="en" hidden>For 4 years I've been caring for the neighbourhood's cats as if they were my own. Every cat has its own character, quirks and favourite hiding spots — my job is learning each one, one at a time.</span>
         </p>
         <div style="display:flex; flex-direction:column; gap:14px; margin-top:8px;">
           <div style="display:flex; align-items:center; gap:12px;">
@@ -237,29 +194,9 @@
       <span class="section-label"><span data-i18n-lang="it">Cosa dicono di me</span><span data-i18n-lang="en" hidden>What clients say</span></span>
       <h2 style="font-size:36px; color:var(--ink);"><span data-i18n-lang="it">Recensioni</span><span data-i18n-lang="en" hidden>Reviews</span></h2>
     </div>
-    <div class="testimonials-grid" style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:28px;">
-      <div class="card" style="display:flex; flex-direction:column; gap:16px; background:var(--paper); box-shadow:none; transform:rotate(-2deg);">
-        <div style="display:flex; gap:4px; color:var(--brand-light);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg>
-        </div>
-        <p style="font-size:15px; line-height:1.6; font-style:italic; opacity:0.8;"><span data-i18n-lang="it">"[Inserisci qui la recensione di un cliente]"</span><span data-i18n-lang="en" hidden>"[Insert a client review here]"</span></p>
-        <span style="font-weight:800; font-size:14px;">— [<span data-i18n-lang="it">Nome cliente</span><span data-i18n-lang="en" hidden>Client name</span>]</span>
-      </div>
-      <div class="card" style="display:flex; flex-direction:column; gap:16px; background:var(--paper); box-shadow:none; transform:rotate(1.5deg);">
-        <div style="display:flex; gap:4px; color:var(--brand-light);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg>
-        </div>
-        <p style="font-size:15px; line-height:1.6; font-style:italic; opacity:0.8;"><span data-i18n-lang="it">"[Inserisci qui la recensione di un cliente]"</span><span data-i18n-lang="en" hidden>"[Insert a client review here]"</span></p>
-        <span style="font-weight:800; font-size:14px;">— [<span data-i18n-lang="it">Nome cliente</span><span data-i18n-lang="en" hidden>Client name</span>]</span>
-      </div>
-      <div class="card" style="display:flex; flex-direction:column; gap:16px; background:var(--paper); box-shadow:none; transform:rotate(-1.5deg);">
-        <div style="display:flex; gap:4px; color:var(--brand-light);">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.7 7-6.3-3.9-6.3 3.9 1.7-7L2 9.2l7.1-.6Z"/></svg>
-        </div>
-        <p style="font-size:15px; line-height:1.6; font-style:italic; opacity:0.8;"><span data-i18n-lang="it">"[Inserisci qui la recensione di un cliente]"</span><span data-i18n-lang="en" hidden>"[Insert a client review here]"</span></p>
-        <span style="font-weight:800; font-size:14px;">— [<span data-i18n-lang="it">Nome cliente</span><span data-i18n-lang="en" hidden>Client name</span>]</span>
-      </div>
-    </div>
+    <!-- Populated by script.js from /api/content (admin > Recensioni) so the client can add,
+         edit or remove reviews without touching code. -->
+    <div class="testimonials-grid" id="testimonials-grid" style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:28px;"></div>
   </section>
 
   <!-- ===== MINI GALLERY ===== -->
@@ -490,7 +427,7 @@
         <span data-i18n-lang="en" hidden>Tell me about your cat, your travel dates, or any question you have — I'm happy to answer.</span>
       </p>
       <p style="font-size:14px; color:var(--cream); opacity:0.8; margin-top:4px;">
-        <span data-i18n-lang="it">Zona coperta: [CITTÀ] e dintorni</span><span data-i18n-lang="en" hidden>Area covered: [CITY] and surroundings</span>
+        <span data-i18n-lang="it">Zona coperta: Napoli e dintorni</span><span data-i18n-lang="en" hidden>Area covered: Naples and surroundings</span>
       </p>
     </div>
 
@@ -555,8 +492,8 @@
           <span style="color:var(--white); font-family:'Fredoka',sans-serif; font-weight:600; font-size:18px;">Michela Cat Sitter</span>
         </div>
         <p style="color:var(--white); opacity:0.55; font-size:14px; line-height:1.6; max-width:280px;">
-          <span data-i18n-lang="it">Cat sitting a domicilio a [CITTÀ] e dintorni. Il tuo gatto, curato come se fosse il mio.</span>
-          <span data-i18n-lang="en" hidden>Cat sitting in [CITY] and the surrounding area. Your cat, cared for like my own.</span>
+          <span data-i18n-lang="it">Cat sitting a domicilio a Napoli e dintorni. Il tuo gatto, curato come se fosse il mio.</span>
+          <span data-i18n-lang="en" hidden>Cat sitting in Naples and the surrounding area. Your cat, cared for like my own.</span>
         </p>
       </div>
       <div style="display:flex; flex-direction:column; gap:12px;">
@@ -570,7 +507,7 @@
         <span style="color:var(--white); font-weight:800; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; opacity:0.5;"><span data-i18n-lang="it">Contatti</span><span data-i18n-lang="en" hidden>Contact</span></span>
         <span style="color:var(--white); opacity:0.75; font-size:14px;">[EMAIL]</span>
         <span style="color:var(--white); opacity:0.75; font-size:14px;">[TELEFONO]</span>
-        <span style="color:var(--white); opacity:0.75; font-size:14px;">[Napoli]</span>
+        <span style="color:var(--white); opacity:0.75; font-size:14px;">Napoli</span>
       </div>
       <div style="display:flex; flex-direction:column; gap:12px;">
         <span style="color:var(--white); font-weight:800; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; opacity:0.5;">Social</span>
