@@ -77,6 +77,32 @@ h1,h2{font-family:'Fredoka',system-ui,sans-serif; margin:0; font-weight:600;}
 .admin-save-btn{background:var(--brand); color:var(--white); border:none; padding:10px 18px; border-radius:100px; font-weight:700; font-size:13px; cursor:pointer;}
 .admin-save-btn:hover{background:var(--ink);}
 
+/* ---- availability: block-dates calendar ---- */
+.admin-cal-card{max-width:360px; margin:0 auto;}
+.admin-cal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+.admin-cal-head span{font-weight:800; font-size:15px; text-transform:capitalize;}
+.admin-cal-nav{display:flex; align-items:center; justify-content:center; width:32px; height:32px; border-radius:50%; background:var(--brand-pale); border:none; cursor:pointer; flex-shrink:0;}
+.admin-cal-nav:hover{background:var(--brand); }
+.admin-cal-nav:hover svg{stroke:var(--white);}
+.admin-cal-nav:disabled{opacity:0.3; cursor:default;}
+.admin-cal-nav:disabled:hover{background:var(--brand-pale);}
+.admin-cal-nav:disabled:hover svg{stroke:var(--ink);}
+.admin-cal-weekdays{display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:6px; margin-bottom:6px;}
+.admin-cal-weekdays span{text-align:center; font-size:11px; font-weight:800; opacity:0.5;}
+.admin-cal-grid{display:grid; grid-template-columns:repeat(7, minmax(0,1fr)); gap:6px;}
+.admin-cal-day{aspect-ratio:1; border-radius:8px; display:flex; align-items:center; justify-content:center; background:var(--paper); border:none; padding:0; margin:0; font-family:inherit; font-size:12px; font-weight:700; color:var(--ink); cursor:pointer; transition:background .15s ease, color .15s ease;}
+.admin-cal-day:hover{background:var(--brand-pale);}
+.admin-cal-day.is-today{box-shadow:inset 0 0 0 2px var(--brand);}
+.admin-cal-day.is-past{opacity:0.35; cursor:default;}
+.admin-cal-day.is-past:hover{background:var(--paper);}
+.admin-cal-day.is-blocked{background:var(--danger); color:var(--white);}
+.admin-cal-day.is-blocked:hover{background:var(--danger); opacity:0.85;}
+.admin-cal-empty{aspect-ratio:1;}
+.admin-cal-legend{display:flex; align-items:center; justify-content:center; gap:18px; margin-top:14px; font-size:12px; font-weight:700; opacity:0.75;}
+.admin-cal-legend span{display:inline-flex; align-items:center; gap:6px;}
+.admin-cal-dot{width:10px; height:10px; border-radius:50%; background:var(--paper); box-shadow:inset 0 0 0 1.5px var(--brand-pale);}
+.admin-cal-dot-blocked{background:var(--danger); box-shadow:none;}
+
 /* ---- single page-wide save ---- */
 .admin-save-all-wrap{display:flex; flex-direction:column; align-items:center; gap:14px; padding:32px 24px; margin-bottom:24px;}
 .admin-save-all-btn{background:var(--brand); color:var(--white); border:none; padding:18px 48px; border-radius:100px; font-weight:800; font-size:17px; cursor:pointer; box-shadow:0 8px 20px rgba(58,18,92,0.18);}

@@ -203,6 +203,10 @@ app.post('/admin/api/save-all', requireAuth, async (req, res) => {
   if (Array.isArray(body.testimonials)) {
     content.testimonials = body.testimonials.map(sanitizeTestimonial);
   }
+  if (Array.isArray(body.blockedDates)) {
+    const isoDate = /^\d{4}-\d{2}-\d{2}$/;
+    content.blockedDates = Array.from(new Set(body.blockedDates.filter((d) => typeof d === 'string' && isoDate.test(d)))).sort();
+  }
 
   await storage.writeContent(content);
   res.json({ ok: true, content });

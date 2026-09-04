@@ -164,67 +164,136 @@
     });
   }
 
-  // ---------- availability calendar (demo dates — not connected to a real calendar) ----------
+  var CAL_MONTH_NAMES = {
+    it: ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'],
+    en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+  };
+  var CAL_MAX_MONTHS_AHEAD = 12; // how far into the future clients can navigate
+
+  // Re-render function for the currently displayed month, set once setupCalendar()
+  // runs and called again from applyContent() once content.blockedDates has
+  // actually loaded (the calendar first renders with nothing blocked yet, since
+  // the fetch hasn't resolved when the page's other click handlers get wired up).
+  var renderCalendar = null;
+
+  // ---------- availability calendar — defaults to the current month, click
+  // #cal-prev/#cal-next to browse forward; blocked days come from the admin
+  // panel's calendar (content.blockedDates) ----------
   function setupCalendar() {
-    var dayButtons = document.querySelectorAll('.cal-day');
+    var grid = document.getElementById('cal-grid');
+    var monthLabel = document.getElementById('cal-month-label');
+    var prevBtn = document.getElementById('cal-prev');
+    var nextBtn = document.getElementById('cal-next');
     var note = document.getElementById('cal-selected-note');
     var noteDay = document.getElementById('cal-selected-day');
     var cta = document.getElementById('cal-cta');
     var ctaText = document.getElementById('cal-cta-text');
-    var monthLabel = document.getElementById('cal-month-label');
-    var selectedDay = null;
+    if (!grid) return;
 
-    var months = {
-      it: ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'],
-      en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-    };
-    if (monthLabel) {
-      var now = new Date();
-      var lang0 = document.documentElement.getAttribute('data-lang') || 'it';
-      var mIt = months.it[now.getMonth()];
-      var mEn = months.en[now.getMonth()];
-      monthLabel.textContent = (lang0 === 'en' ? mEn : mIt) + ' ' + now.getFullYear();
+    var today = new Date();
+    var todayY = today.getFullYear(), todayM = today.getMonth(), todayD = today.getDate();
+    var viewYear = todayY, viewMonth = todayM;
+    var selectedIso = null;
+    var selectedLabel = null;
+
+    function lang() { return document.documentElement.getAttribute('data-lang') || 'it'; }
+    function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+    function isoDate(y, m, d) { return y + '-' + pad2(m + 1) + '-' + pad2(d); }
+    function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
+    // Mon=0 .. Sun=6, to match the L M M G V S D header already in the page.
+    function firstWeekdayMon0(y, m) { return (new Date(y, m, 1).getDay() + 6) % 7; }
+    function defaultCtaText() { return lang() === 'en' ? 'Choose a free day' : 'Scegli un giorno libero qui accanto'; }
+    function resetSelection() {
+      selectedIso = null; selectedLabel = null;
+      if (note) note.classList.remove('is-visible');
+      if (ctaText) ctaText.textContent = defaultCtaText();
+      if (cta) cta.classList.remove('is-sent');
     }
 
-    function defaultCtaText(lang) {
-      return lang === 'en' ? 'Choose a free day' : 'Scegli un giorno libero qui accanto';
-    }
-    if (ctaText) { ctaText.textContent = defaultCtaText(document.documentElement.getAttribute('data-lang') || 'it'); }
+    function render() {
+      var l = lang();
+      if (monthLabel) monthLabel.textContent = CAL_MONTH_NAMES[l][viewMonth] + ' ' + viewYear;
 
-    dayButtons.forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var lang = document.documentElement.getAttribute('data-lang') || 'it';
-        dayButtons.forEach(function (b) { b.classList.remove('is-selected'); });
-        btn.classList.add('is-selected');
-        selectedDay = btn.getAttribute('data-day');
-        if (note) { note.classList.add('is-visible'); }
-        if (noteDay) { noteDay.textContent = selectedDay; }
-        if (ctaText) {
-          ctaText.textContent = lang === 'en'
-            ? ('Request the ' + selectedDay + ' — send now')
-            : ('Richiedi il ' + selectedDay + ' — invia ora');
+      var blocked = {};
+      (siteContent.blockedDates || []).forEach(function (d) { blocked[d] = true; });
+
+      var lead = firstWeekdayMon0(viewYear, viewMonth);
+      var total = daysInMonth(viewYear, viewMonth);
+      var html = '';
+      for (var i = 0; i < lead; i++) html += '<div class="cal-cell"></div>';
+      for (var d = 1; d <= total; d++) {
+        var iso = isoDate(viewYear, viewMonth, d);
+        var isPast = viewYear < todayY || (viewYear === todayY && viewMonth < todayM) || (viewYear === todayY && viewMonth === todayM && d < todayD);
+        var isToday = viewYear === todayY && viewMonth === todayM && d === todayD;
+        if (isPast || blocked[iso]) {
+          html += '<div class="cal-cell cal-booked"><span>' + d + '</span></div>';
+        } else {
+          html += '<button type="button" class="cal-cell cal-day' + (isToday ? ' is-today' : '') + (iso === selectedIso ? ' is-selected' : '') + '" data-date="' + iso + '" data-day="' + d + '"><span>' + d + '</span></button>';
         }
-        if (cta) { cta.classList.remove('is-sent'); }
+      }
+      var trail = (7 - ((lead + total) % 7)) % 7;
+      for (var t = 0; t < trail; t++) html += '<div class="cal-cell"></div>';
+      grid.innerHTML = html;
+
+      grid.querySelectorAll('.cal-day').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          grid.querySelectorAll('.cal-day').forEach(function (b) { b.classList.remove('is-selected'); });
+          btn.classList.add('is-selected');
+          selectedIso = btn.getAttribute('data-date');
+          var dayNum = btn.getAttribute('data-day');
+          selectedLabel = dayNum + ' ' + CAL_MONTH_NAMES[lang()][viewMonth];
+          if (note) note.classList.add('is-visible');
+          if (noteDay) noteDay.textContent = selectedLabel;
+          if (ctaText) {
+            ctaText.textContent = lang() === 'en'
+              ? ('Request ' + selectedLabel + ' — send now')
+              : ('Richiedi il ' + selectedLabel + ' — invia ora');
+          }
+          if (cta) cta.classList.remove('is-sent');
+        });
       });
-    });
+
+      var monthsAhead = (viewYear - todayY) * 12 + (viewMonth - todayM);
+      if (prevBtn) prevBtn.disabled = monthsAhead <= 0;
+      if (nextBtn) nextBtn.disabled = monthsAhead >= CAL_MAX_MONTHS_AHEAD;
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function () {
+        if (prevBtn.disabled) return;
+        viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+        resetSelection();
+        render();
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        if (nextBtn.disabled) return;
+        viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+        resetSelection();
+        render();
+      });
+    }
+
+    if (ctaText) ctaText.textContent = defaultCtaText();
 
     if (cta) {
       cta.addEventListener('click', function () {
-        if (!selectedDay) { return; }
-        var lang = document.documentElement.getAttribute('data-lang') || 'it';
+        if (!selectedIso) return;
+        var l = lang();
         // Client-configured (admin > Disponibilità): either show a message on
         // the page, or hand the request straight to WhatsApp — siteContent is
         // read live here, not copied at setup time, so it always reflects the
         // latest fetched content.
         var method = siteContent.availabilityMethod || 'message';
         var msgObj = siteContent.availabilityMessage || {};
-        var template = (lang === 'en' ? msgObj.en : msgObj.it) || defaultAvailabilityMessage(lang);
-        var text = template.replace('{giorno}', selectedDay).replace('{day}', selectedDay);
+        var template = (l === 'en' ? msgObj.en : msgObj.it) || defaultAvailabilityMessage(l);
+        var text = template.replace('{giorno}', selectedLabel).replace('{day}', selectedLabel);
 
         if (method === 'whatsapp') {
           var number = (siteContent.whatsappNumber && siteContent.whatsappNumber.indexOf('X') === -1) ? siteContent.whatsappNumber : WHATSAPP_NUMBER;
           window.open('https://wa.me/' + number + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
-          if (ctaText) { ctaText.textContent = lang === 'en' ? 'Opening WhatsApp…' : 'Apertura di WhatsApp…'; }
+          if (ctaText) ctaText.textContent = l === 'en' ? 'Opening WhatsApp…' : 'Apertura di WhatsApp…';
         } else if (ctaText) {
           ctaText.textContent = text;
         }
@@ -232,11 +301,14 @@
       });
     }
 
-    function defaultAvailabilityMessage(lang) {
-      return lang === 'en'
-        ? ('Request sent for the ' + selectedDay + '! I will reply soon.')
-        : ('Richiesta inviata per il ' + selectedDay + '! Ti rispondo a breve.');
+    function defaultAvailabilityMessage(l) {
+      return l === 'en'
+        ? ('Request sent for ' + selectedLabel + '! I will reply soon.')
+        : ('Richiesta inviata per il ' + selectedLabel + '! Ti rispondo a breve.');
     }
+
+    render();
+    renderCalendar = render;
   }
 
   // ---------- FAQ accordion ----------
@@ -318,6 +390,7 @@
     setupWhatsappRoverLinks(content);
     renderServices(content.services);
     renderTestimonials(content.testimonials);
+    if (renderCalendar) renderCalendar();
   }
 
   function setPhotoSlot(id, src) {

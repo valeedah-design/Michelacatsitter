@@ -92,6 +92,30 @@
     </section>
 
     <section class="admin-section">
+      <h2>Disponibilità — giorni bloccati</h2>
+      <p class="admin-hint">Clicca su un giorno per bloccarlo o sbloccarlo (ferie, giorni già impegnati, ecc.). I giorni bloccati compaiono come "occupati" nel calendario del sito.</p>
+      <div class="admin-cal-card">
+        <div class="admin-cal-head">
+          <button type="button" id="admin-cal-prev" class="admin-cal-nav" aria-label="Mese precedente">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <span id="admin-cal-month-label"></span>
+          <button type="button" id="admin-cal-next" class="admin-cal-nav" aria-label="Mese successivo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+        <div class="admin-cal-weekdays">
+          <span>L</span><span>M</span><span>M</span><span>G</span><span>V</span><span>S</span><span>D</span>
+        </div>
+        <div id="admin-cal-grid" class="admin-cal-grid"></div>
+        <div class="admin-cal-legend">
+          <span><i class="admin-cal-dot"></i> Libero</span>
+          <span><i class="admin-cal-dot admin-cal-dot-blocked"></i> Bloccato</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-section">
       <h2>Disponibilità — messaggio di conferma</h2>
       <p class="admin-hint">Cosa succede quando un cliente clicca su un giorno libero nel calendario e conferma la richiesta. Usa {giorno} nel testo per inserire il giorno scelto.</p>
       <div class="admin-field">

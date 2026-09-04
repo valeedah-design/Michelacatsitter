@@ -4,8 +4,19 @@
   var GALLERY_SIZE = 4;
   var statusEl = document.getElementById('status-message');
 
+  // ---------- block-dates calendar state ----------
+  // The DOM only ever shows one month at a time, so — unlike services/
+  // testimonials — we can't recover which dates are blocked by reading the
+  // grid at save-time. blockedDatesState is the source of truth, kept in
+  // sync with clicks and seeded from the server on load/after save.
+  var blockedDatesState = [];
+  var renderAdminCalendar = null; // set inside setupAdminCalendar()
+  var ADMIN_CAL_MONTH_NAMES = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+  var ADMIN_CAL_MAX_MONTHS_AHEAD = 12;
+
   document.addEventListener('DOMContentLoaded', function () {
     buildGalleryGrid();
+    setupAdminCalendar();
     loadContent();
     wireLogout();
     wireUploadButtons();
@@ -53,6 +64,8 @@
     fillAvailabilitySettingsForm(content);
     renderServicesAdmin(content.services || []);
     renderTestimonialsAdmin(content.testimonials || []);
+    blockedDatesState = (content.blockedDates || []).slice();
+    if (renderAdminCalendar) renderAdminCalendar();
   }
 
   function renderPreviews(content) {
@@ -248,6 +261,82 @@
     });
   }
 
+  // ---------- availability: block-dates calendar ----------
+  function setupAdminCalendar() {
+    var grid = document.getElementById('admin-cal-grid');
+    var monthLabel = document.getElementById('admin-cal-month-label');
+    var prevBtn = document.getElementById('admin-cal-prev');
+    var nextBtn = document.getElementById('admin-cal-next');
+    if (!grid) return;
+
+    var today = new Date();
+    var todayY = today.getFullYear(), todayM = today.getMonth(), todayD = today.getDate();
+    var viewYear = todayY, viewMonth = todayM;
+
+    function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+    function isoDate(y, m, d) { return y + '-' + pad2(m + 1) + '-' + pad2(d); }
+    function daysInMonth(y, m) { return new Date(y, m + 1, 0).getDate(); }
+    function firstWeekdayMon0(y, m) { return (new Date(y, m, 1).getDay() + 6) % 7; }
+
+    function render() {
+      if (monthLabel) monthLabel.textContent = ADMIN_CAL_MONTH_NAMES[viewMonth] + ' ' + viewYear;
+      var blocked = {};
+      blockedDatesState.forEach(function (d) { blocked[d] = true; });
+      var lead = firstWeekdayMon0(viewYear, viewMonth);
+      var total = daysInMonth(viewYear, viewMonth);
+      var html = '';
+      for (var i = 0; i < lead; i++) html += '<div class="admin-cal-empty"></div>';
+      for (var d = 1; d <= total; d++) {
+        var iso = isoDate(viewYear, viewMonth, d);
+        var isPast = viewYear < todayY || (viewYear === todayY && viewMonth < todayM) || (viewYear === todayY && viewMonth === todayM && d < todayD);
+        var isToday = viewYear === todayY && viewMonth === todayM && d === todayD;
+        var cls = 'admin-cal-day';
+        if (isToday) cls += ' is-today';
+        if (isPast) cls += ' is-past';
+        if (blocked[iso]) cls += ' is-blocked';
+        html += '<button type="button" class="' + cls + '" data-date="' + iso + '"' + (isPast ? ' disabled' : '') + '>' + d + '</button>';
+      }
+      var trail = (7 - ((lead + total) % 7)) % 7;
+      for (var t = 0; t < trail; t++) html += '<div class="admin-cal-empty"></div>';
+      grid.innerHTML = html;
+
+      grid.querySelectorAll('.admin-cal-day:not(.is-past)').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var iso = btn.getAttribute('data-date');
+          var idx = blockedDatesState.indexOf(iso);
+          if (idx === -1) {
+            blockedDatesState.push(iso);
+          } else {
+            blockedDatesState.splice(idx, 1);
+          }
+          render();
+        });
+      });
+
+      var monthsAhead = (viewYear - todayY) * 12 + (viewMonth - todayM);
+      if (prevBtn) prevBtn.disabled = monthsAhead <= 0;
+      if (nextBtn) nextBtn.disabled = monthsAhead >= ADMIN_CAL_MAX_MONTHS_AHEAD;
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', function () {
+        if (prevBtn.disabled) return;
+        viewMonth--; if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+        render();
+      });
+    }
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        if (nextBtn.disabled) return;
+        viewMonth++; if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+        render();
+      });
+    }
+
+    render();
+    renderAdminCalendar = render;
+  }
+
   // ---------- the one save button at the bottom of the page ----------
   function wireSaveAllButton() {
     var btn = document.getElementById('save-all-btn');
@@ -280,6 +369,7 @@
             name: row.querySelector('.f-name').value,
           };
         }),
+        blockedDates: blockedDatesState.slice(),
       };
 
       btn.disabled = true;
