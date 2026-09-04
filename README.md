@@ -47,18 +47,32 @@ Uploaded images are saved to the `uploads/` folder and tracked in
 
 ## 2. Deploying it for real
 
-This is a normal Node.js app, so it runs on any Node host. The one thing to
-check for on any host: **persistent disk**. Uploaded photos live in the
-`uploads/` folder and `data/content.json` on the server's filesystem — if the
-host wipes the filesystem on every deploy (some "serverless" platforms do),
-uploaded photos will disappear. A host with a persistent disk avoids this.
-The app already supports this cleanly via one environment variable,
-`PERSIST_DIR` (see step 4 below).
+This app supports two different ways of running in production, and it's the
+same codebase either way — nothing to rewrite, just a different host and a
+couple of environment variables:
 
-**Recommended: [Render](https://render.com)** (simple, has a free tier, supports
-a persistent disk):
+- **Option A — Render** (or any traditional always-on host: Railway, Fly.io,
+  a VPS): a real, persistent server process with a real disk. Uploaded
+  photos are written straight to that disk (via the `PERSIST_DIR` env var).
+- **Option B — Vercel**: serverless — there's no traditional server or local
+  disk at all. Uploaded photos and `content.json` are stored in **Vercel
+  Blob** instead (Vercel's own file storage), and admin logins use a signed
+  cookie rather than server memory, so it all works the same way across
+  Vercel's short-lived function instances. Set the `BLOB_READ_WRITE_TOKEN`
+  environment variable (Vercel adds this automatically once you connect a
+  Blob store — see below) and the app switches to this mode automatically;
+  leave it unset and it uses local disk instead, so the exact same code runs
+  unmodified on both platforms.
 
-### Step 1 — put the code on GitHub
+Pick whichever host you'd rather use — pricing and control are the real
+difference, not functionality. Instructions for both follow.
+
+### Option A: Render
+
+**Recommended if you'd rather not think about it** (simple, has a free tier,
+supports a persistent disk):
+
+#### Step 1 — put the code on GitHub
 
 Render deploys from a Git repo.
 
@@ -79,7 +93,7 @@ Render deploys from a Git repo.
   git push -u origin main
   ```
 
-### Step 2 — create the Render web service
+#### Step 2 — create the Render web service
 
 1. Sign up / log in at [render.com](https://render.com) (you can sign in
    with your GitHub account, which makes the next step one click).
@@ -89,7 +103,7 @@ Render deploys from a Git repo.
    inactivity and wakes on the next visit, which is fine for a small
    business site; upgrade later if that delay bothers you).
 
-### Step 3 — add the persistent disk
+#### Step 3 — add the persistent disk
 
 Still on the same service's setup (or under its **Disks** tab after
 creating it):
@@ -100,7 +114,7 @@ creating it):
    `PERSIST_DIR` points to, so this one disk covers everything that needs
    to survive a redeploy.
 
-### Step 4 — add the rest of the environment variables
+#### Step 4 — add the rest of the environment variables
 
 In the same **Environment** tab, add:
 
@@ -112,14 +126,14 @@ In the same **Environment** tab, add:
 Do not commit your real `.env` file to GitHub — these go directly into
 Render's dashboard instead.
 
-### Step 5 — deploy, then check it
+#### Step 5 — deploy, then check it
 
 Click **Create Web Service**. Render builds and deploys, and gives you a URL
 like `michela-cat-sitter.onrender.com`. Open it, click through the site, log
 into `/admin`, and try uploading a photo to confirm everything works before
 moving on to the domain.
 
-### Step 6 — point your IONOS domain at it
+#### Step 6 — point your IONOS domain at it
 
 1. In the Render dashboard, open the service → **Settings** → **Custom
    Domains** → **Add Custom Domain**, and enter your domain (e.g.
@@ -144,17 +158,80 @@ moving on to the domain.
    also issues a free SSL certificate automatically once verified, so the
    site will be reachable at `https://michelacatsitter.it`.
 
-Other hosts that work the same way if you'd rather not use Render: Railway,
-Fly.io, or a small VPS (e.g. DigitalOcean) running the app behind `pm2` or
-as a `systemd` service — the same `PERSIST_DIR` env var trick applies
-anywhere you can mount a persistent volume.
+Other hosts that work the same way as Render if you'd rather not use it:
+Railway, Fly.io, or a small VPS (e.g. DigitalOcean) running the app behind
+`pm2` or as a `systemd` service — the same `PERSIST_DIR` env var trick
+applies anywhere you can mount a persistent volume.
 
-Other good options that work the same way: Railway, Fly.io, or a small VPS
-(e.g. DigitalOcean) running the app behind `pm2` or as a `systemd` service.
+### Option B: Vercel
 
-**Do not deploy this as-is to a purely static host** (Netlify/Vercel/GitHub
-Pages static hosting, etc.) — the admin panel and image uploads need a
-running Node server, which those don't provide by default.
+Vercel doesn't run a traditional always-on server — it runs your code as
+short-lived serverless functions instead, so there's no local disk to save
+uploaded photos to. This app handles that by storing uploads and
+`content.json` in **Vercel Blob** (Vercel's built-in file storage) instead
+of on disk, and using a signed cookie for admin logins instead of
+server-side session memory. That switch happens automatically based on one
+environment variable — nothing to configure beyond what's below.
+
+#### Step 1 — put the code on GitHub
+
+Same as Option A's Step 1 above — Vercel deploys from a Git repo too. If
+you've already pushed to GitHub, skip ahead to Step 2.
+
+#### Step 2 — create the Vercel project
+
+1. Sign up / log in at [vercel.com](https://vercel.com) — signing in with
+   GitHub makes the next step one click.
+2. **Add New...** → **Project** → **Import** your `michela-cat-sitter` repo.
+3. Vercel auto-detects it as a Node project. Leave the build settings as
+   Vercel suggests (no changes needed — `vercel.json` in the repo already
+   tells Vercel how to route requests). Don't click Deploy yet.
+
+#### Step 3 — create and connect a Blob store
+
+Still in the project setup (or afterward, under the project's **Storage**
+tab):
+
+1. Go to the **Storage** tab → **Create Database** → **Blob**.
+2. Give it a name (anything, e.g. `michela-photos`) and create it.
+3. Connect it to this project if it doesn't do so automatically. This step
+   is what makes Vercel add the `BLOB_READ_WRITE_TOKEN` environment variable
+   to your project automatically — you don't type this one in yourself.
+
+#### Step 4 — add the rest of the environment variables
+
+Under the project's **Settings → Environment Variables**, add:
+
+- `ADMIN_USERNAME` — e.g. `michela`
+- `ADMIN_PASSWORD` — a real password
+- `SESSION_SECRET` — a long random string (generate one with
+  `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`)
+
+(`BLOB_READ_WRITE_TOKEN` should already be there from Step 3 — double check
+it's listed.)
+
+#### Step 5 — deploy, then check it
+
+Deploy (or redeploy, if it already deployed automatically after import).
+Vercel gives you a URL like `michela-cat-sitter.vercel.app`. Open it, click
+through the site, log into `/admin`, and upload a test photo — check it
+actually appears (this exercises the Blob storage path, so it's worth
+confirming here rather than assuming).
+
+#### Step 6 — point your IONOS domain at it
+
+1. In the Vercel dashboard, open the project → **Settings** → **Domains** →
+   add your domain (e.g. `michelacatsitter.it`).
+2. Vercel shows you the DNS record(s) it needs — typically an **A record**
+   for the bare domain and a **CNAME** for `www`.
+3. Log into [IONOS](https://www.ionos.com) → **Domains & SSL** → select your
+   domain → **DNS**, and add exactly the records Vercel showed you (remove
+   any existing IONOS "parked domain" records for the same host names first
+   so they don't conflict).
+4. Back in Vercel, wait for the domain to show as verified — Vercel issues a
+   free SSL certificate automatically, so the site will be reachable at
+   `https://michelacatsitter.it` once DNS propagates (a few minutes to a few
+   hours).
 
 ## 3. Before you tell people the site is live — placeholders to fill in
 
