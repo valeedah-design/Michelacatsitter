@@ -100,12 +100,12 @@ const upload = multer({
   },
 });
 
-// slot: "logo" | "about" | "gallery-0".."gallery-3"
+// slot: "logo" | "about" | "hero" | "gallery-0".."gallery-3"
 app.post('/admin/api/upload', requireAuth, upload.single('file'), async (req, res) => {
   const slot = req.body.slot;
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
   const isGallery = /^gallery-\d+$/.test(slot);
-  if (slot !== 'logo' && slot !== 'about' && !isGallery) {
+  if (slot !== 'logo' && slot !== 'about' && slot !== 'hero' && !isGallery) {
     return res.status(400).json({ error: 'Invalid slot' });
   }
   let galleryIdx = null;
@@ -122,6 +122,7 @@ app.post('/admin/api/upload', requireAuth, upload.single('file'), async (req, re
     const content = await storage.readContent();
     if (slot === 'logo') content.logo = url;
     else if (slot === 'about') content.about = url;
+    else if (slot === 'hero') content.hero = url;
     else content.gallery[galleryIdx] = url;
 
     await storage.writeContent(content);
@@ -136,6 +137,8 @@ app.post('/admin/api/remove', requireAuth, async (req, res) => {
   const content = await storage.readContent();
   if (slot === 'about') {
     content.about = null;
+  } else if (slot === 'hero') {
+    content.hero = null;
   } else if (/^gallery-\d+$/.test(slot)) {
     const idx = parseInt(slot.split('-')[1], 10);
     if (idx < 0 || idx >= GALLERY_SIZE) return res.status(400).json({ error: 'Invalid gallery slot' });

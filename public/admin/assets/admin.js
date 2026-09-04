@@ -43,6 +43,7 @@
 
   function renderPreviews(content) {
     setPreview('preview-logo', content.logo, 'Nessun logo');
+    setPreview('preview-hero', content.hero, '[FOTO]');
     setPreview('preview-about', content.about, '[FOTO DI MICHELA]');
     (content.gallery || []).forEach(function (src, i) {
       setPreview('preview-gallery-' + i, src, '[FOTO]');

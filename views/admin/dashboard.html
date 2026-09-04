@@ -18,12 +18,25 @@
   <main class="admin-main">
     <section class="admin-section">
       <h2>Logo</h2>
-      <p class="admin-hint">Usato nell'intestazione, nella sezione principale e nel footer.</p>
+      <p class="admin-hint">Usato nell'intestazione e nel footer.</p>
       <div class="slot-row">
         <div class="slot-preview" id="preview-logo"></div>
         <div class="slot-controls">
           <input type="file" id="file-logo" accept="image/png,image/jpeg,image/webp,image/gif">
           <button class="admin-btn" data-slot="logo" data-input="file-logo">Carica / sostituisci</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-section">
+      <h2>Sezione principale — foto</h2>
+      <p class="admin-hint">La foto rotonda a destra nella sezione principale (in alto nella homepage), al posto del logo.</p>
+      <div class="slot-row">
+        <div class="slot-preview" id="preview-hero"></div>
+        <div class="slot-controls">
+          <input type="file" id="file-hero" accept="image/png,image/jpeg,image/webp,image/gif">
+          <button class="admin-btn" data-slot="hero" data-input="file-hero">Carica / sostituisci</button>
+          <button class="admin-btn-remove" data-slot="hero">Rimuovi</button>
         </div>
       </div>
     </section>

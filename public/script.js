@@ -186,11 +186,12 @@
 
   function applyContent(content) {
     if (content.logo) {
-      ['logo-header', 'logo-hero', 'logo-footer'].forEach(function (id) {
+      ['logo-header', 'logo-footer'].forEach(function (id) {
         var img = document.getElementById(id);
         if (img) { img.src = content.logo; }
       });
     }
+    setPhotoSlot('photo-hero', content.hero);
     setPhotoSlot('photo-about', content.about);
     (content.gallery || []).forEach(function (src, i) {
       setPhotoSlot('photo-gallery-' + i, src);
