@@ -116,15 +116,8 @@
     </section>
 
     <section class="admin-section">
-      <h2>Disponibilità — messaggio di conferma</h2>
-      <p class="admin-hint">Cosa succede quando un cliente clicca su un giorno libero nel calendario e conferma la richiesta. Usa {giorno} nel testo per inserire il giorno scelto.</p>
-      <div class="admin-field">
-        <label for="settings-availability-method">Come ricevere la richiesta</label>
-        <select id="settings-availability-method">
-          <option value="message">Mostra un messaggio sulla pagina</option>
-          <option value="whatsapp">Apri WhatsApp con il messaggio già pronto</option>
-        </select>
-      </div>
+      <h2>Disponibilità — messaggio WhatsApp</h2>
+      <p class="admin-hint">Quando un cliente clicca su un giorno libero nel calendario e conferma, si apre WhatsApp con questo messaggio già scritto, pronto da inviare. Usa {giorno} nel testo per inserire il giorno scelto.</p>
       <div class="admin-field">
         <label for="settings-availability-message-it">Messaggio (italiano)</label>
         <textarea id="settings-availability-message-it"></textarea>
@@ -132,6 +125,50 @@
       <div class="admin-field">
         <label for="settings-availability-message-en">Messaggio (inglese)</label>
         <textarea id="settings-availability-message-en"></textarea>
+      </div>
+    </section>
+
+    <section class="admin-section">
+      <h2>FAQ</h2>
+      <p class="admin-hint">Le domande frequenti mostrate nella sezione "FAQ" della homepage. Modifica quelle esistenti o aggiungine di nuove.</p>
+      <div id="faq-admin-list"></div>
+      <button type="button" class="admin-add-btn" id="add-faq-btn">+ Aggiungi domanda</button>
+    </section>
+
+    <section class="admin-section">
+      <h2>Footer</h2>
+      <p class="admin-hint">Le informazioni mostrate in fondo al sito (footer): descrizione, contatti e social.</p>
+      <div class="admin-field">
+        <label for="footer-tagline-it">Descrizione sotto il logo (italiano)</label>
+        <textarea id="footer-tagline-it"></textarea>
+      </div>
+      <div class="admin-field">
+        <label for="footer-tagline-en">Descrizione sotto il logo (inglese)</label>
+        <textarea id="footer-tagline-en"></textarea>
+      </div>
+      <div class="admin-field-row">
+        <div class="admin-field">
+          <label for="footer-email">Email</label>
+          <input type="text" id="footer-email" placeholder="michela@esempio.it">
+        </div>
+        <div class="admin-field">
+          <label for="footer-phone">Telefono</label>
+          <input type="text" id="footer-phone" placeholder="+39 333 1234567">
+        </div>
+      </div>
+      <div class="admin-field">
+        <label for="footer-city">Città</label>
+        <input type="text" id="footer-city" placeholder="Napoli">
+      </div>
+      <div class="admin-field-row">
+        <div class="admin-field">
+          <label for="footer-instagram">Link Instagram (lascia vuoto per nascondere l'icona)</label>
+          <input type="text" id="footer-instagram" placeholder="https://instagram.com/tuoprofilo">
+        </div>
+        <div class="admin-field">
+          <label for="footer-facebook">Link Facebook (lascia vuoto per nascondere l'icona)</label>
+          <input type="text" id="footer-facebook" placeholder="https://facebook.com/tuapagina">
+        </div>
       </div>
     </section>
 

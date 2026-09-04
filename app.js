@@ -181,6 +181,16 @@ function sanitizeTestimonial(raw) {
   };
 }
 
+function sanitizeFaq(raw) {
+  raw = raw || {};
+  return {
+    questionIt: String(raw.questionIt || '').slice(0, 200),
+    questionEn: String(raw.questionEn || '').slice(0, 200),
+    answerIt: String(raw.answerIt || '').slice(0, 800),
+    answerEn: String(raw.answerEn || '').slice(0, 800),
+  };
+}
+
 app.post('/admin/api/save-all', requireAuth, async (req, res) => {
   const body = req.body || {};
   const content = await storage.readContent();
@@ -203,10 +213,24 @@ app.post('/admin/api/save-all', requireAuth, async (req, res) => {
   if (Array.isArray(body.testimonials)) {
     content.testimonials = body.testimonials.map(sanitizeTestimonial);
   }
+  if (Array.isArray(body.faqs)) {
+    content.faqs = body.faqs.map(sanitizeFaq);
+  }
   if (Array.isArray(body.blockedDates)) {
     const isoDate = /^\d{4}-\d{2}-\d{2}$/;
     content.blockedDates = Array.from(new Set(body.blockedDates.filter((d) => typeof d === 'string' && isoDate.test(d)))).sort();
   }
+  if (body.footerTagline && typeof body.footerTagline === 'object') {
+    content.footerTagline = {
+      it: typeof body.footerTagline.it === 'string' ? body.footerTagline.it.slice(0, 300) : content.footerTagline.it,
+      en: typeof body.footerTagline.en === 'string' ? body.footerTagline.en.slice(0, 300) : content.footerTagline.en,
+    };
+  }
+  if (typeof body.footerEmail === 'string') content.footerEmail = body.footerEmail.trim().slice(0, 120);
+  if (typeof body.footerPhone === 'string') content.footerPhone = body.footerPhone.trim().slice(0, 60);
+  if (typeof body.footerCity === 'string') content.footerCity = body.footerCity.trim().slice(0, 80);
+  if (typeof body.socialInstagramUrl === 'string') content.socialInstagramUrl = body.socialInstagramUrl.trim().slice(0, 300);
+  if (typeof body.socialFacebookUrl === 'string') content.socialFacebookUrl = body.socialFacebookUrl.trim().slice(0, 300);
 
   await storage.writeContent(content);
   res.json({ ok: true, content });

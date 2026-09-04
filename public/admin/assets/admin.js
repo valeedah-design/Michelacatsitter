@@ -23,6 +23,7 @@
     wireRemoveButtons();
     wireServiceAdd();
     wireTestimonialAdd();
+    wireFaqAdd();
     wireSaveAllButton();
   });
 
@@ -64,6 +65,8 @@
     fillAvailabilitySettingsForm(content);
     renderServicesAdmin(content.services || []);
     renderTestimonialsAdmin(content.testimonials || []);
+    renderFaqAdmin(content.faqs || []);
+    fillFooterSettingsForm(content);
     blockedDatesState = (content.blockedDates || []).slice();
     if (renderAdminCalendar) renderAdminCalendar();
   }
@@ -157,15 +160,32 @@
     if (rover) rover.value = content.roverUrl || '';
   }
 
-  // ---------- availability confirmation — just fields, no per-section save ----------
+  // ---------- availability WhatsApp message — just fields, no per-section save ----------
   function fillAvailabilitySettingsForm(content) {
-    var method = document.getElementById('settings-availability-method');
     var msgIt = document.getElementById('settings-availability-message-it');
     var msgEn = document.getElementById('settings-availability-message-en');
     var am = content.availabilityMessage || {};
-    if (method) method.value = content.availabilityMethod === 'whatsapp' ? 'whatsapp' : 'message';
     if (msgIt) msgIt.value = am.it || '';
     if (msgEn) msgEn.value = am.en || '';
+  }
+
+  // ---------- footer info — just fields, no per-section save ----------
+  function fillFooterSettingsForm(content) {
+    var taglineIt = document.getElementById('footer-tagline-it');
+    var taglineEn = document.getElementById('footer-tagline-en');
+    var email = document.getElementById('footer-email');
+    var phone = document.getElementById('footer-phone');
+    var city = document.getElementById('footer-city');
+    var ig = document.getElementById('footer-instagram');
+    var fb = document.getElementById('footer-facebook');
+    var tg = content.footerTagline || {};
+    if (taglineIt) taglineIt.value = tg.it || '';
+    if (taglineEn) taglineEn.value = tg.en || '';
+    if (email) email.value = content.footerEmail || '';
+    if (phone) phone.value = content.footerPhone || '';
+    if (city) city.value = content.footerCity || '';
+    if (ig) ig.value = content.socialInstagramUrl || '';
+    if (fb) fb.value = content.socialFacebookUrl || '';
   }
 
   // ---------- services (Cosa faccio) — rows are edited/added/removed locally;
@@ -261,6 +281,49 @@
     });
   }
 
+  // ---------- FAQ — same local-only pattern as services/testimonials ----------
+  function renderFaqAdmin(faqs) {
+    var list = document.getElementById('faq-admin-list');
+    if (!list) return;
+    list.innerHTML = '';
+    faqs.forEach(function (f) {
+      list.appendChild(buildFaqRow(f));
+    });
+  }
+
+  function buildFaqRow(f) {
+    f = f || {};
+    var row = document.createElement('div');
+    row.className = 'admin-list-item';
+    row.innerHTML = ''
+      + '<div class="admin-field"><label>Domanda (italiano)</label><input type="text" class="f-question-it" value="' + escHtml(f.questionIt) + '"></div>'
+      + '<div class="admin-field"><label>Domanda (inglese)</label><input type="text" class="f-question-en" value="' + escHtml(f.questionEn) + '"></div>'
+      + '<div class="admin-field"><label>Risposta (italiano)</label><textarea class="f-answer-it">' + escHtml(f.answerIt) + '</textarea></div>'
+      + '<div class="admin-field"><label>Risposta (inglese)</label><textarea class="f-answer-en">' + escHtml(f.answerEn) + '</textarea></div>'
+      + '<div class="admin-list-actions">'
+      + '  <button type="button" class="admin-btn-remove" data-action="remove">Rimuovi</button>'
+      + '</div>';
+
+    row.querySelector('[data-action="remove"]').addEventListener('click', function () {
+      if (!window.confirm('Rimuovere questa domanda? Diventa definitivo quando premi "Salva modifiche".')) return;
+      row.remove();
+    });
+    return row;
+  }
+
+  function wireFaqAdd() {
+    var btn = document.getElementById('add-faq-btn');
+    var list = document.getElementById('faq-admin-list');
+    if (!btn || !list) return;
+    btn.addEventListener('click', function () {
+      var row = buildFaqRow({ questionIt: 'Nuova domanda', questionEn: 'New question', answerIt: '', answerEn: '' });
+      list.appendChild(row);
+      row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      var firstInput = row.querySelector('.f-question-it');
+      if (firstInput) firstInput.focus();
+    });
+  }
+
   // ---------- availability: block-dates calendar ----------
   function setupAdminCalendar() {
     var grid = document.getElementById('admin-cal-grid');
@@ -346,7 +409,10 @@
         whatsappNumber: fieldValue('settings-whatsapp-number'),
         whatsappMessage: fieldValue('settings-whatsapp-message'),
         roverUrl: fieldValue('settings-rover-url'),
-        availabilityMethod: fieldValue('settings-availability-method') || 'message',
+        // Clicking a free day on the public calendar always opens WhatsApp now
+        // (no more "show a message on the page" alternative) — kept in the
+        // payload only for backward compatibility with the stored schema.
+        availabilityMethod: 'whatsapp',
         availabilityMessage: {
           it: fieldValue('settings-availability-message-it'),
           en: fieldValue('settings-availability-message-en'),
@@ -369,7 +435,24 @@
             name: row.querySelector('.f-name').value,
           };
         }),
+        faqs: collectRows('#faq-admin-list', function (row) {
+          return {
+            questionIt: row.querySelector('.f-question-it').value,
+            questionEn: row.querySelector('.f-question-en').value,
+            answerIt: row.querySelector('.f-answer-it').value,
+            answerEn: row.querySelector('.f-answer-en').value,
+          };
+        }),
         blockedDates: blockedDatesState.slice(),
+        footerTagline: {
+          it: fieldValue('footer-tagline-it'),
+          en: fieldValue('footer-tagline-en'),
+        },
+        footerEmail: fieldValue('footer-email'),
+        footerPhone: fieldValue('footer-phone'),
+        footerCity: fieldValue('footer-city'),
+        socialInstagramUrl: fieldValue('footer-instagram'),
+        socialFacebookUrl: fieldValue('footer-facebook'),
       };
 
       btn.disabled = true;

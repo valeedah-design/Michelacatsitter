@@ -29,7 +29,6 @@
     setupWhatsappRoverLinks({});
     setupMobileNav();
     setupCalendar();
-    setupFaqAccordion();
     setupContactForm();
     setupFooterYear();
     loadContent();
@@ -87,9 +86,11 @@
       if (text) { field.setAttribute('placeholder', text); }
     });
     try { localStorage.setItem('michela-lang', lang); } catch (e) { /* ignore */ }
-    // Re-render admin-managed lists in the newly selected language.
+    // Re-render admin-managed lists/text in the newly selected language.
     if (siteContent.services) { renderServices(siteContent.services); }
     if (siteContent.testimonials) { renderTestimonials(siteContent.testimonials); }
+    if (siteContent.faqs) { renderFaqs(siteContent.faqs); }
+    if (siteContent.footerTagline) { renderFooterInfo(siteContent); }
   }
 
   // ---------- WhatsApp / Rover links (client-editable via admin panel) ----------
@@ -162,6 +163,76 @@
     return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
+  }
+
+  // ---------- FAQ (client-editable via admin panel) ----------
+  // Which items are expanded is tracked here (by index) so switching language
+  // re-renders the text without collapsing whatever the visitor had open.
+  var faqOpenState = null;
+  function renderFaqs(faqs) {
+    var list = document.getElementById('faq-list');
+    if (!list || !Array.isArray(faqs)) return;
+    var lang = document.documentElement.getAttribute('data-lang') || 'it';
+    if (!faqOpenState || faqOpenState.length !== faqs.length) {
+      faqOpenState = faqs.map(function (_, i) { return i === 0; });
+    }
+    list.innerHTML = faqs.map(function (f, i) {
+      var q = lang === 'en' ? (f.questionEn || f.questionIt) : (f.questionIt || f.questionEn);
+      var a = lang === 'en' ? (f.answerEn || f.answerIt) : (f.answerIt || f.answerEn);
+      return ''
+        + '<div class="card faq-item' + (faqOpenState[i] ? ' is-open' : '') + '" data-idx="' + i + '" style="background:var(--white); box-shadow:none; border:1.5px solid var(--brand-pale); padding:24px 28px;">'
+        + '<button type="button" class="faq-question">'
+        + '<h3 style="font-size:17px;">' + escapeHtml(q) + '</h3>'
+        + '<svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>'
+        + '</button>'
+        + '<p class="faq-answer">' + escapeHtml(a) + '</p>'
+        + '</div>';
+    }).join('');
+
+    list.querySelectorAll('.faq-item').forEach(function (item) {
+      var question = item.querySelector('.faq-question');
+      if (!question) return;
+      question.addEventListener('click', function () {
+        var isOpen = item.classList.toggle('is-open');
+        var idx = parseInt(item.getAttribute('data-idx'), 10);
+        if (!isNaN(idx)) faqOpenState[idx] = isOpen;
+      });
+    });
+  }
+
+  // ---------- footer info (client-editable via admin panel) ----------
+  function renderFooterInfo(content) {
+    var lang = document.documentElement.getAttribute('data-lang') || 'it';
+    var tagline = document.getElementById('footer-tagline');
+    if (tagline) {
+      var tg = content.footerTagline || {};
+      tagline.textContent = (lang === 'en' ? (tg.en || tg.it) : (tg.it || tg.en)) || '';
+    }
+    var email = document.getElementById('footer-email');
+    if (email) email.textContent = content.footerEmail || '';
+    var phone = document.getElementById('footer-phone');
+    if (phone) phone.textContent = content.footerPhone || '';
+    var city = document.getElementById('footer-city');
+    if (city) city.textContent = content.footerCity || '';
+
+    var ig = document.getElementById('footer-instagram');
+    if (ig) {
+      if (content.socialInstagramUrl) {
+        ig.href = content.socialInstagramUrl;
+        ig.style.display = '';
+      } else {
+        ig.style.display = 'none';
+      }
+    }
+    var fb = document.getElementById('footer-facebook');
+    if (fb) {
+      if (content.socialFacebookUrl) {
+        fb.href = content.socialFacebookUrl;
+        fb.style.display = '';
+      } else {
+        fb.style.display = 'none';
+      }
+    }
   }
 
   var CAL_MONTH_NAMES = {
@@ -281,45 +352,28 @@
       cta.addEventListener('click', function () {
         if (!selectedIso) return;
         var l = lang();
-        // Client-configured (admin > Disponibilità): either show a message on
-        // the page, or hand the request straight to WhatsApp — siteContent is
-        // read live here, not copied at setup time, so it always reflects the
-        // latest fetched content.
-        var method = siteContent.availabilityMethod || 'message';
+        // Clicking a free day always opens WhatsApp with the selected date
+        // filled into the client's message template (admin > Disponibilità).
+        // siteContent is read live here, not copied at setup time, so it
+        // always reflects the latest fetched content.
         var msgObj = siteContent.availabilityMessage || {};
         var template = (l === 'en' ? msgObj.en : msgObj.it) || defaultAvailabilityMessage(l);
         var text = template.replace('{giorno}', selectedLabel).replace('{day}', selectedLabel);
-
-        if (method === 'whatsapp') {
-          var number = (siteContent.whatsappNumber && siteContent.whatsappNumber.indexOf('X') === -1) ? siteContent.whatsappNumber : WHATSAPP_NUMBER;
-          window.open('https://wa.me/' + number + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
-          if (ctaText) ctaText.textContent = l === 'en' ? 'Opening WhatsApp…' : 'Apertura di WhatsApp…';
-        } else if (ctaText) {
-          ctaText.textContent = text;
-        }
+        var number = (siteContent.whatsappNumber && siteContent.whatsappNumber.indexOf('X') === -1) ? siteContent.whatsappNumber : WHATSAPP_NUMBER;
+        window.open('https://wa.me/' + number + '?text=' + encodeURIComponent(text), '_blank', 'noopener');
+        if (ctaText) ctaText.textContent = l === 'en' ? 'Opening WhatsApp…' : 'Apertura di WhatsApp…';
         cta.classList.add('is-sent');
       });
     }
 
     function defaultAvailabilityMessage(l) {
       return l === 'en'
-        ? ('Request sent for ' + selectedLabel + '! I will reply soon.')
-        : ('Richiesta inviata per il ' + selectedLabel + '! Ti rispondo a breve.');
+        ? ('Hi Michela! I would like to book for ' + selectedLabel + ' — is it available?')
+        : ('Ciao Michela! Vorrei prenotare per il ' + selectedLabel + ', è disponibile?');
     }
 
     render();
     renderCalendar = render;
-  }
-
-  // ---------- FAQ accordion ----------
-  function setupFaqAccordion() {
-    document.querySelectorAll('.faq-item').forEach(function (item) {
-      var question = item.querySelector('.faq-question');
-      if (!question) { return; }
-      question.addEventListener('click', function () {
-        item.classList.toggle('is-open');
-      });
-    });
   }
 
   // ---------- contact form ----------
@@ -390,6 +444,8 @@
     setupWhatsappRoverLinks(content);
     renderServices(content.services);
     renderTestimonials(content.testimonials);
+    renderFaqs(content.faqs);
+    renderFooterInfo(content);
     if (renderCalendar) renderCalendar();
   }
 
