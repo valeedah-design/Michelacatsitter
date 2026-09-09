@@ -216,6 +216,14 @@
     if (city) city.textContent = content.footerCity || '';
 
     var ig = document.getElementById('footer-instagram');
+if (ig && content.socialInstagramUrl) {
+  ig.href = content.socialInstagramUrl;
+}
+
+var fb = document.getElementById('footer-facebook');
+if (fb && content.socialFacebookUrl) {
+  fb.href = content.socialFacebookUrl;
+}
     if (ig) {
       if (content.socialInstagramUrl) {
         ig.href = content.socialInstagramUrl;
