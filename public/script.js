@@ -4,9 +4,9 @@
   // ====== CONFIG — fallback defaults, used until /api/content loads (or if a
   // field was never set in the admin panel). Everything here is also editable
   // by the client from Impostazioni contatti / Disponibilità in the admin panel. ======
-  var WHATSAPP_NUMBER = '39XXXXXXXXXX';
+  var WHATSAPP_NUMBER = '393519563921';
   var WHATSAPP_MESSAGE = 'Ciao Michela! Vorrei chiederti informazioni per il mio gatto.';
-  var ROVER_URL = 'https://www.rover.com/';
+  var ROVER_URL = 'https://www.rover.com/members/michela-u-passeggiate-giochi-e-tanto-amore/?pet_type=cat&service_type=drop-in&location=Napoli%2C+Campania&location_type=city';
   // Formspree (or similar) form endpoint. Leave empty to disable real submission (shows a friendly message instead).
   var CONTACT_FORM_ENDPOINT = '';
   // =================================================
