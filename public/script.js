@@ -224,23 +224,6 @@ var fb = document.getElementById('footer-facebook');
 if (fb && content.socialFacebookUrl) {
   fb.href = content.socialFacebookUrl;
 }
-    if (ig) {
-      if (content.socialInstagramUrl) {
-        ig.href = content.socialInstagramUrl;
-        ig.style.display = '';
-      } else {
-        ig.style.display = 'none';
-      }
-    }
-    var fb = document.getElementById('footer-facebook');
-    if (fb) {
-      if (content.socialFacebookUrl) {
-        fb.href = content.socialFacebookUrl;
-        fb.style.display = '';
-      } else {
-        fb.style.display = 'none';
-      }
-    }
   }
 
   var CAL_MONTH_NAMES = {
