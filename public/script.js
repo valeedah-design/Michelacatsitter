@@ -206,7 +206,8 @@
     var tagline = document.getElementById('footer-tagline');
     if (tagline) {
       var tg = content.footerTagline || {};
-      tagline.textContent = (lang === 'en' ? (tg.en || tg.it) : (tg.it || tg.en)) || '';
+      var newTagline = lang === 'en'   ? (tg.en || tg.it)   : (tg.it || tg.en); 
+      if (newTagline) {   tagline.textContent = newTagline; }
     }
     var email = document.getElementById('footer-email');
     if (email) email.textContent = content.footerEmail || '';
