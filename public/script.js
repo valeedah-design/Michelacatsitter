@@ -209,10 +209,10 @@
       var newTagline = lang === 'en'   ? (tg.en || tg.it)   : (tg.it || tg.en); 
       if (newTagline) {   tagline.textContent = newTagline; }
     }
-    var email document.getElementById('footer-email'); 
+    var email = document.getElementById('footer-email'); 
     if (email && content.footerEmail) email.textContent = content.footerEmail; 
-    var phone document getElementById 'footer-phone.' 
-    if (phone && content.footerPhone) phone .textContent = content.footerPhone;
+    var phone = document.getElementById('footer-phone'); 
+    if (phone && content.footerPhone) phone.textContent = content.footerPhone;
     var city = document.getElementById('footer-city');
     if (city) city.textContent = content.footerCity || '';
 
